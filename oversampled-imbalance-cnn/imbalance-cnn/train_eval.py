@@ -5,7 +5,10 @@ import numpy as np
 import os
 import time
 import datetime
+import random
 import data_helpers
+from sklearn.metrics import precision_recall_fscore_support
+from sklearn.metrics import confusion_matrix
 from text_cnn import TextCNN
 from tensorflow.contrib import learn
 
@@ -36,12 +39,12 @@ for attr, value in sorted(FLAGS.__flags.items()):
 print("")
 
 
-# Data Preparatopn
+# Data Preparation
 # ==================================================
 
 # Load data
 print("Loading data...")
-x_text, y = data_helpers.load_data_and_labels()
+x_text, y = data_helpers.load_data_and_labels(1500,"positive")
 
 # Build vocabulary
 max_document_length = max([len(x.split(" ")) for x in x_text])
@@ -51,20 +54,89 @@ x = np.array(list(vocab_processor.fit_transform(x_text)))
 # Randomly shuffle data
 np.random.seed(10)
 shuffle_indices = np.random.permutation(np.arange(len(y)))
+#x_raw_shuffled = x_text[shuffle_indices]
 x_shuffled = x[shuffle_indices]
+for x in range(0, 2):
+    print("The x shuffled is:%s", x_shuffled)
 y_shuffled = y[shuffle_indices]
-
+#quit()
 # Split train/test set
 # TODO: This is very crude, should use cross-validation
 x_train, x_dev = x_shuffled[:-1000], x_shuffled[-1000:]
 y_train, y_dev = y_shuffled[:-1000], y_shuffled[-1000:]
+#x_raw = x_raw_shuffled[:-1000]
+
 print("Writing out x dev")
 np.save('dev_x.txt',x_dev)
 print("Writing out y dev")
 np.save('dev_y.txt',y_dev)
 
+#Get count of positive negative in train set
+pos_value = np.array([0,1])
+neg_value = np.array([1,0])
+
+list_positive_instances = []
+list_negative_instances = []
+list_positive_balanced = []
+list_negative_balanced = []
+runonceneg = 0
+runoncepos = 0
+for x in range(0, len(x_train)):
+    if (y_train[x]==pos_value).all():
+       print("Positive Label")
+       list_positive_instances.append(x_train[x])
+    else:
+       print("Negative label")
+       list_negative_instances.append(x_train[x])
+
+#print("This is the new array:%s",x_train[1])
+print("The count of positive labels in test: %s",len(list_positive_instances))
+print("The count of negative labels in test: %s",len(list_negative_instances))
+
+if len(list_positive_instances) > len(list_negative_instances):
+    print("Oversampling the negative instances")
+    for x in range(0,len(list_positive_instances)):
+ 	list_negative_balanced.append(list_negative_instances[random.randint(0,len(list_negative_instances)-1)])
+    print("Negative size now: %s",len(list_negative_balanced))
+    list_negative_instances = list_negative_balanced
+else:
+    print("Oversampling the positive instances")
+    for x in range(0,len(list_negative_instances)):
+        list_positive_balanced.append(list_positive_instances[random.randint(0,len(list_positive_instances)-1)])
+    print("Positive size now: %s",len(list_positive_balanced))
+    list_positive_instances = list_positive_balanced
+
+#Regenerate the labels
+
+positive_labels = [[0,1] for _ in list_positive_instances]
+negative_labels = [[1,0] for _ in list_negative_instances]
+print("Length of positive labels:%s",positive_labels)
+print("Length of negative labels:%s",negative_labels)
+
+
+
+
+y_t = np.concatenate([positive_labels, negative_labels],0)
+x_t = np.array(list_positive_instances + list_negative_instances)
+#for x in range(0,len(x_t)):
+#    print("Instances:%s",x_t[x])
+
+#x_t = [data_helpers.clean_str(sent) for sent in x_t]
+
+# Build vocabulary
+#max_document_length = max([len(x.split(" ")) for x in x_t])
+#vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
+#x = np.array(list(vocab_processor.fit_transform(x_t)))
+
+np.random.seed(10)
+shuffle_indices = np.random.permutation(np.arange(len(y_t)))
+x_train = x_t[shuffle_indices]
+y_train = y_t[shuffle_indices]
+print("Overall Length:%s", len(y_train))
+
+
 print("Vocabulary Size: {:d}".format(len(vocab_processor.vocabulary_)))
-print("Train/Dev split: {:d}/{:d}".format(len(y_train), len(y_dev)))
+#print("Train/Dev split: {:d}/{:d}".format(len(y_train), len(y_dev)))
 
 
 # Training
@@ -181,3 +253,6 @@ with tf.Graph().as_default():
             if current_step % FLAGS.checkpoint_every == 0:
                 path = saver.save(sess, checkpoint_prefix, global_step=current_step)
                 print("Saved model checkpoint to {}\n".format(path))
+
+
+

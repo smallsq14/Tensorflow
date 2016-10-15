@@ -58,11 +58,6 @@ y_shuffled = y[shuffle_indices]
 # TODO: This is very crude, should use cross-validation
 x_train, x_dev = x_shuffled[:-1000], x_shuffled[-1000:]
 y_train, y_dev = y_shuffled[:-1000], y_shuffled[-1000:]
-print("Writing out x dev")
-np.save('dev_x.txt',x_dev)
-print("Writing out y dev")
-np.save('dev_y.txt',y_dev)
-
 print("Vocabulary Size: {:d}".format(len(vocab_processor.vocabulary_)))
 print("Train/Dev split: {:d}/{:d}".format(len(y_train), len(y_dev)))
 

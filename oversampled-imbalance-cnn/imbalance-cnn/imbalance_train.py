@@ -42,7 +42,7 @@ print("")
 # Load data
 print("Loading data...")
 x_text, y = data_helpers.load_data_and_labels()
-
+quit()
 # Build vocabulary
 max_document_length = max([len(x.split(" ")) for x in x_text])
 vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
@@ -58,11 +58,6 @@ y_shuffled = y[shuffle_indices]
 # TODO: This is very crude, should use cross-validation
 x_train, x_dev = x_shuffled[:-1000], x_shuffled[-1000:]
 y_train, y_dev = y_shuffled[:-1000], y_shuffled[-1000:]
-print("Writing out x dev")
-np.save('dev_x.txt',x_dev)
-print("Writing out y dev")
-np.save('dev_y.txt',y_dev)
-
 print("Vocabulary Size: {:d}".format(len(vocab_processor.vocabulary_)))
 print("Train/Dev split: {:d}/{:d}".format(len(y_train), len(y_dev)))
 
@@ -163,7 +158,7 @@ with tf.Graph().as_default():
                 feed_dict)
             time_str = datetime.datetime.now().isoformat()
             print("{}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
-	    if writer:
+            if writer:
                 writer.add_summary(summaries, step)
 
         # Generate batches
