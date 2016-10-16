@@ -83,20 +83,14 @@ with graph.as_default():
 
 # Print accuracy if y_test is defined
 if y_test is not None:
-    print(batch_predictions)
-    print("*******")
-    print(all_predictions)
-    
-    print("y_test: %s",y_test)
-    print("x_test: %s",x_test)
     correct_predictions = float(sum(all_predictions == y_test))
     print("Total number of test examples: {}".format(len(y_test)))
-    print("All predictions%S",len(all_predictions))
-    print("y test: %s",len(y_test))
-    print("x_test: %s",len(x_test))
+    #print("All predictions%S",len(all_predictions))
+    #print("y test: %s",len(y_test))
+    #print("x_test: %s",len(x_test))
     print("Incorrect Predictions %s", float(sum(all_predictions != y_test)))
     print("Correct Predictions %s", len(y_test) - float(sum(all_predictions != y_test)))
     print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
-    print("Precision, Recall, Fscore")
-    print(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
+    #print("Precision, Recall, Fscore")
+    #print(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
     print(confusion_matrix(y_test, all_predictions))
