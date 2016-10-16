@@ -64,8 +64,8 @@ for t in range(0,5):
     if t == 5:
         imbalance_size = 3500
         pos_or_neg = "negative"
-    outfile = open(imbalance_size+'_' + pos_or_neg + '_results.txt', 'w')
-    outfile.write("Data Resutls for %s %s",imbalance_size,pos_or_neg)
+    outfile = open(str(imbalance_size)+'_' + pos_or_neg + '_results.txt', 'w')
+    outfile.write("Data Resutls for {} {}".format(imbalance_size,pos_or_neg))
     x_text, y = data_helpers.load_data_and_labels(imbalance_size,pos_or_neg)
 
     # Build vocabulary
@@ -120,8 +120,8 @@ for t in range(0,5):
         outfile.write("Oversampling the negative instances")
         for x in range(0,len(list_positive_instances)):
             list_negative_balanced.append(list_negative_instances[random.randint(0,len(list_negative_instances)-1)])
-        print("Negative size now: %s",len(list_negative_balanced))
-        outfile.write("Negative size now: %s", len(list_negative_balanced))
+        print("Negative size now: {}".format(len(list_negative_balanced)))
+        outfile.write("Negative size now: {}".format(len(list_negative_balanced)))
         list_negative_instances = list_negative_balanced
     else:
         print("Oversampling the positive instances")
@@ -129,7 +129,7 @@ for t in range(0,5):
         for x in range(0,len(list_negative_instances)):
             list_positive_balanced.append(list_positive_instances[random.randint(0,len(list_positive_instances)-1)])
         print("Positive size now: %s",len(list_positive_balanced))
-        outfile.write("Positive size now: %s", len(list_positive_balanced))
+        outfile.write("Positive size now: {}".format(len(list_positive_balanced)))
         list_positive_instances = list_positive_balanced
 
     #Regenerate the labels
@@ -159,7 +159,7 @@ for t in range(0,5):
     x_train = x_t[shuffle_indices]
     y_train = y_t[shuffle_indices]
     print("Overall Length:%s", len(y_train))
-    outfile.write("Overall Length:%s", len(y_train))
+    outfile.write("Overall Length:{}".format(len(y_train)))
 
 
     print("Vocabulary Size: {:d}".format(len(vocab_processor.vocabulary_)))
@@ -262,8 +262,8 @@ for t in range(0,5):
                     feed_dict)
                 time_str = datetime.datetime.now().isoformat()
                 print("{}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
-            if writer:
-                    writer.add_summary(summaries, step)
+            #if writer:
+            #        writer.add_summary(summaries, step)
 
             # Generate batches
             batches = data_helpers.batch_iter(
@@ -343,11 +343,11 @@ for t in range(0,5):
         print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
         print("Precision, Recall, Fscore")
         outfile.write("Total number of test examples: {}".format(len(y_test)))
-        outfile.write("All predictions%S", len(all_predictions))
-        outfile.write("y test: %s", len(y_test))
-        outfile.write("x_test: %s", len(x_test))
-        outfile.write("Incorrect Predictions %s", float(sum(all_predictions != y_test)))
-        outfile.write("Correct Predictions %s", len(y_test) - float(sum(all_predictions != y_test)))
+        outfile.write("All predictions {}".format(len(all_predictions)))
+        outfile.write("y test: {}".format(len(y_test)))
+        outfile.write("x_test: {}".format(len(x_test)))
+        outfile.write("Incorrect Predictions {}".format(float(sum(all_predictions != y_test))))
+        outfile.write("Correct Predictions {}".format(len(y_test) - float(sum(all_predictions != y_test))))
         outfile.write("Accuracy: {:g}".format(correct_predictions / float(len(y_test))))
         outfile.write("Precision, Recall, Fscore")
         outfile.write(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
