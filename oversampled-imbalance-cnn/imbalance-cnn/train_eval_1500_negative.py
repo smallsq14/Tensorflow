@@ -45,7 +45,7 @@ print("")
 # Load data
 print("Loading data...")
 imbalance_size = 1500
-pos_or_neg = "positive"
+pos_or_neg = "negative"
 #if t == 0:
 #    imbalance_size = 1500
 #    pos_or_neg = "positive"
