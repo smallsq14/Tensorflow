@@ -282,11 +282,11 @@ with tf.Graph().as_default():
                 print("Saved model checkpoint to {}\n".format(path))
 
 
-
+print("\n Beginning Dev data load")
 #Begin Evaluation of Dev
-    x_raw = np.load("dev_x.txt.npy")
-    y_test = np.load("dev_y.txt.npy")
-    y_test = np.argmax(y_test, axis=1)
+x_raw = np.load("dev_x.txt.npy")
+y_test = np.load("dev_y.txt.npy")
+y_test = np.argmax(y_test, axis=1)
 
 # Map data into vocabulary
 vocab_path = os.path.join(checkpoint_dir, "..", "vocab")
@@ -350,6 +350,6 @@ if y_test is not None:
     outfile.write("Correct Predictions {}".format(len(y_test) - float(sum(all_predictions != y_test))))
     outfile.write("Accuracy: {:g}".format(correct_predictions / float(len(y_test))))
     outfile.write("Precision, Recall, Fscore")
-    outfile.write(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
+    #outfile.write(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
     outfile.write(confusion_matrix(y_test, all_predictions))
     outfile.close()

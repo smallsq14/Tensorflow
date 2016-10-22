@@ -42,7 +42,7 @@ print("")
 
 # Load data
 print("Loading data...")
-x_text, y = data_helpers.load_data_and_labels(1500,"positive")
+x_text, y = data_helpers.load_data_and_labels(1500,"negative")
 
 # Build vocabulary
 max_document_length = max([len(x.split(" ")) for x in x_text])
