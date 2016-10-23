@@ -43,29 +43,35 @@ print("")
 # ==================================================
 
 # Load data
-for t in range(0,3):
+random_seed = 10
+run_number = 2
+for t in range(0,4):
     print("Loading data...")
     imbalance_size = 1500
     pos_or_neg = "positive"
     if t == 0:
         imbalance_size = 1500
         pos_or_neg = "positive"
+        random_seed = 3
     if t == 1:
         imbalance_size = 1500
         pos_or_neg = "negative"
+        random_seed = 2
     if t == 2:
         imbalance_size = 2500
         pos_or_neg = "positive"
+        random_seed = 5
     if t == 3:
         imbalance_size = 2500
-    #    pos_or_neg = "negative"
-    #if t == 4:
-    #    imbalance_size = 3500
-    #    pos_or_neg = "positive"
-    #if t == 5:
-    #    imbalance_size = 3500
-    #    pos_or_neg = "negative"
-    outfile = open(str(imbalance_size)+'_' + pos_or_neg + '_results.txt', 'w')
+        pos_or_neg = "negative"
+        random_seed = 7
+    if t == 4:
+        imbalance_size = 3500
+        pos_or_neg = "positive"
+    if t == 5:
+        imbalance_size = 3500
+        pos_or_neg = "negative"
+    outfile = open(str(imbalance_size)+'_' + pos_or_neg + '_results'+run_number+'.txt', 'w')
     outfile.write("Data Resutls for {} {}".format(imbalance_size,pos_or_neg))
     x_text, y = data_helpers.load_data_and_labels(imbalance_size,pos_or_neg)
 
@@ -75,7 +81,7 @@ for t in range(0,3):
     x = np.array(list(vocab_processor.fit_transform(x_text)))
 
     # Randomly shuffle data
-    np.random.seed(10)
+    np.random.seed(random_seed)
     shuffle_indices = np.random.permutation(np.arange(len(y)))
     #x_raw_shuffled = x_text[shuffle_indices]
     x_shuffled = x[shuffle_indices]
@@ -350,7 +356,7 @@ for t in range(0,3):
         outfile.write("Incorrect Predictions {}".format(float(sum(all_predictions != y_test))))
         outfile.write("Correct Predictions {}".format(len(y_test) - float(sum(all_predictions != y_test))))
         outfile.write("Accuracy: {:g}".format(correct_predictions / float(len(y_test))))
-        outfile.write("Precision, Recall, Fscore")
+        outfile.write("Precision, Recall, Fscore\n")
         #outfile.write(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
         outfile.write(confusion_matrix(y_test, all_predictions))
         outfile.close()
