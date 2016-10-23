@@ -64,7 +64,6 @@ for t in range(0,4):
     if t == 3:
         imbalance_size = 2500
         pos_or_neg = "negative"
-<<<<<<< HEAD
         random_seed = 7
     if t == 4:
         imbalance_size = 3500
@@ -73,15 +72,6 @@ for t in range(0,4):
         imbalance_size = 3500
         pos_or_neg = "negative"
     outfile = open(str(imbalance_size)+'_' + pos_or_neg + '_results'+run_number+'.txt', 'w')
-=======
-    #if t == 4:
-    #    imbalance_size = 3500
-    #    pos_or_neg = "positive"
-    #if t == 5:
-    #    imbalance_size = 3500
-    #    pos_or_neg = "negative"
-    outfile = open(str(imbalance_size)+'_' + pos_or_neg + '_results.txt', 'w')
->>>>>>> origin/master
     outfile.write("Data Resutls for {} {}".format(imbalance_size,pos_or_neg))
     x_text, y = data_helpers.load_data_and_labels(imbalance_size,pos_or_neg)
 
@@ -359,16 +349,6 @@ for t in range(0,4):
         print("Correct Predictions %s", len(y_test) - float(sum(all_predictions != y_test)))
         print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
         print("Precision, Recall, Fscore")
-<<<<<<< HEAD
-        outfile.write("Total number of test examples: {}".format(len(y_test)))
-        outfile.write("All predictions {}".format(len(all_predictions)))
-        outfile.write("y test: {}".format(len(y_test)))
-        outfile.write("x_test: {}".format(len(x_test)))
-        outfile.write("Incorrect Predictions {}".format(float(sum(all_predictions != y_test))))
-        outfile.write("Correct Predictions {}".format(len(y_test) - float(sum(all_predictions != y_test))))
-        outfile.write("Accuracy: {:g}".format(correct_predictions / float(len(y_test))))
-        outfile.write("Precision, Recall, Fscore\n")
-=======
         outfile.write("\nTotal number of test examples: {}".format(len(y_test)))
         outfile.write("\nAll predictions {}".format(len(all_predictions)))
         outfile.write("\ny test: {}".format(len(y_test)))
@@ -377,8 +357,7 @@ for t in range(0,4):
         outfile.write("\nCorrect Predictions {}".format(len(y_test) - float(sum(all_predictions != y_test))))
         outfile.write("\nAccuracy: {:g}".format(correct_predictions / float(len(y_test))))
         outfile.write("\nPrecision, Recall, Fscore")
->>>>>>> origin/master
         #outfile.write(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
-	outfile.write(np.array2string(confusion_matrix(y_test, all_predictions),separator=','))        
-	#outfile.write(confusion_matrix(y_test, all_predictions))
+        outfile.write(np.array2string(confusion_matrix(y_test, all_predictions),separator=','))
+	    #outfile.write(confusion_matrix(y_test, all_predictions))
         outfile.close()
