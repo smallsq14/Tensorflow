@@ -44,7 +44,7 @@ print("")
 
 # Load data
 random_seed = 10
-run_number = 2
+run_number = 3
 for t in range(0,4):
     print("Loading data...")
     imbalance_size = 1500
@@ -52,26 +52,26 @@ for t in range(0,4):
     if t == 0:
         imbalance_size = 1500
         pos_or_neg = "positive"
-        random_seed = 3
+        random_seed = 4
     if t == 1:
         imbalance_size = 1500
         pos_or_neg = "negative"
-        random_seed = 2
+        random_seed = 3
     if t == 2:
         imbalance_size = 2500
         pos_or_neg = "positive"
-        random_seed = 5
+        random_seed = 8
     if t == 3:
         imbalance_size = 2500
         pos_or_neg = "negative"
-        random_seed = 7
+        random_seed = 2
     if t == 4:
         imbalance_size = 3500
         pos_or_neg = "positive"
     if t == 5:
         imbalance_size = 3500
         pos_or_neg = "negative"
-    outfile = open(str(imbalance_size)+'_' + pos_or_neg + '_results'+run_number+'.txt', 'w')
+    outfile = open(str(imbalance_size)+'_' + pos_or_neg + '_results'+str(run_number)+'.txt', 'w')
     outfile.write("Data Resutls for {} {}".format(imbalance_size,pos_or_neg))
     x_text, y = data_helpers.load_data_and_labels(imbalance_size,pos_or_neg)
 

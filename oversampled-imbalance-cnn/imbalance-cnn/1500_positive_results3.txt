@@ -1,0 +1,10 @@
+Data Resutls for 1500 positiveOversampling the positive instancesPositive size now: 4545Overall Length:9090
+Total number of test examples: 1000
+All predictions 1000
+y test: 1000
+x_test: 1000
+Incorrect Predictions 197.0
+Correct Predictions 803.0
+Accuracy: 0.803
+Precision, Recall, Fscore[[708, 78],
+ [119, 95]]
