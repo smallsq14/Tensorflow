@@ -30,7 +30,10 @@ tf.flags.DEFINE_integer("checkpoint_every", 100, "Save model after this many ste
 # Misc Parameters
 tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
 tf.flags.DEFINE_boolean("log_device_placement", False, "Log placement of ops on devices")
-
+tf.flags.DEFINE_integer("imbalance_size",1500,"Sets the size of imbalance")
+tf.flags.DEFINE_integer("positive_negative",0,"Sets the polarity")
+tf.flags.DEFINE_integer("random_seed",10,"Sets the np random seed")
+tf.flags.DEFINE_integer("run_number",0,"Sets the run number for the filename")
 FLAGS = tf.flags.FLAGS
 FLAGS._parse_flags()
 print("\nParameters:")
@@ -44,27 +47,13 @@ print("")
 
 # Load data
 print("Loading data...")
-imbalance_size = 1500
-pos_or_neg = "positive"
-if t == 0:
-    imbalance_size = 1500
-    pos_or_neg = "positive"
-if t == 1:
-    imbalance_size = 1500
+imbalance_size = FLAGS.imbalance_size
+
+if FLAGS.positive_negative == 0:
     pos_or_neg = "negative"
-if t == 2:
-    imbalance_size = 2500
+else:
     pos_or_neg = "positive"
-if t == 3:
-    imbalance_size = 2500
-#    pos_or_neg = "negative"
-#if t == 4:
-#    imbalance_size = 3500
-#    pos_or_neg = "positive"
-#if t == 5:
-#    imbalance_size = 3500
-#    pos_or_neg = "negative"
-outfile = open(str(imbalance_size)+'_' + pos_or_neg + '_results.txt', 'w')
+outfile = open(str(imbalance_size)+'_' + pos_or_neg + '_results'+str(FLAGS.run_number)+'.txt', 'w')
 outfile.write("Data Resutls for {} {}".format(imbalance_size,pos_or_neg))
 x_text, y = data_helpers.load_data_and_labels(imbalance_size,pos_or_neg)
 
@@ -342,14 +331,14 @@ if y_test is not None:
     print("Correct Predictions %s", len(y_test) - float(sum(all_predictions != y_test)))
     print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
     print("Precision, Recall, Fscore")
-    outfile.write("Total number of test examples: {}".format(len(y_test)))
-    outfile.write("All predictions {}".format(len(all_predictions)))
-    outfile.write("y test: {}".format(len(y_test)))
-    outfile.write("x_test: {}".format(len(x_test)))
-    outfile.write("Incorrect Predictions {}".format(float(sum(all_predictions != y_test))))
-    outfile.write("Correct Predictions {}".format(len(y_test) - float(sum(all_predictions != y_test))))
-    outfile.write("Accuracy: {:g}".format(correct_predictions / float(len(y_test))))
-    outfile.write("Precision, Recall, Fscore")
+    outfile.write("\nTotal number of test examples: {}".format(len(y_test)))
+    outfile.write("\nAll predictions {}".format(len(all_predictions)))
+    outfile.write("\ny test: {}".format(len(y_test)))
+    outfile.write("\nx_test: {}".format(len(x_test)))
+    outfile.write("\nIncorrect Predictions {}".format(float(sum(all_predictions != y_test))))
+    outfile.write("\nCorrect Predictions {}".format(len(y_test) - float(sum(all_predictions != y_test))))
+    outfile.write("\nAccuracy: {:g}".format(correct_predictions / float(len(y_test))))
+    #outfile.write("Precision, Recall, Fscore")
     #outfile.write(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
-    outfile.write(confusion_matrix(y_test, all_predictions))
+    outfile.write(np.array2string(confusion_matrix(y_test, all_predictions),separator=','))
     outfile.close()
