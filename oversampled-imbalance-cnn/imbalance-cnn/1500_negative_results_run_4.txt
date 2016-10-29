@@ -3,8 +3,8 @@ Total number of test examples: 1000
 All predictions 1000
 y test: 1000
 x_test: 1000
-Incorrect Predictions 228.0
-Correct Predictions 772.0
-Accuracy: 0.772
-Precision, Recall, Fscore[[ 80,149],
- [ 79,692]]
+Incorrect Predictions 214.0
+Correct Predictions 786.0
+Accuracy: 0.786
+Precision, Recall, Fscore[[ 89,140],
+ [ 74,697]]

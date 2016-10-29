@@ -1,0 +1,10 @@
+Data Resutls for 2500 negativeOversampling the negative instancesNegative size now: 4666Overall Length:9332
+Total number of test examples: 1000
+All predictions 1000
+y test: 1000
+x_test: 1000
+Incorrect Predictions 262.0
+Correct Predictions 738.0
+Accuracy: 0.738
+Precision, Recall, Fscore[[170,165],
+ [ 97,568]]

@@ -6,5 +6,5 @@ x_test: 1000
 Incorrect Predictions 228.0
 Correct Predictions 772.0
 Accuracy: 0.772
-Precision, Recall, Fscore[[ 80,149],
- [ 79,692]]
+Precision, Recall, Fscore[[ 81,148],
+ [ 80,691]]
