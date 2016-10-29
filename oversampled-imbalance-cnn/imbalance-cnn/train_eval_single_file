@@ -52,7 +52,7 @@ t = 0
 
 rand_seed = randint(0, 9)
 print("Loading data...")
-imbalance_size = 1500
+imbalance_size = 5000
 pos_or_neg = "positive"
 if t == 0:
     imbalance_size = 1500
