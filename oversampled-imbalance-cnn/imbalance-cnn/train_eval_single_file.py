@@ -7,6 +7,7 @@ import time
 import datetime
 import random
 import data_helpers_single_file
+import mysql.connector
 from random import randint
 from sklearn.metrics import precision_recall_fscore_support
 from sklearn.metrics import confusion_matrix
@@ -38,7 +39,8 @@ print("\nParameters:")
 for attr, value in sorted(FLAGS.__flags.items()):
     print("{}={}".format(attr.upper(), value))
 print("")
-
+cnx = mysql.connector.connect(user='datauser',password='datauser', database='tensorflow')
+cursor = cnx.cursor()
 
 # Data Preparation
 # ==================================================
@@ -47,11 +49,10 @@ print("")
 random_seed = 10
 run_number = 1
 t = 0
-p = 1
 
 rand_seed = randint(0, 9)
 print("Loading data...")
-imbalance_size = 1500
+imbalance_size = 5000
 pos_or_neg = "positive"
 if t == 0:
     imbalance_size = 1500
@@ -76,6 +77,7 @@ if t == 5:
     imbalance_size = 3500
     pos_or_neg = "negative"
 outfile = open('sf_'+str(imbalance_size)+'_' + pos_or_neg + '_results_run_'+str(p)+'.txt', 'w')
+dbfieldname = 'sf_'+str(imbalance_size)+'_' + pos_or_neg + '_results_run_'+str(p)
 outfile.write("Data Resutls for {} {}".format(imbalance_size,pos_or_neg))
 x_text, y = data_helpers_single_file.load_data_and_labels(imbalance_size,pos_or_neg)
 
@@ -126,6 +128,7 @@ for x in range(0, len(x_train)):
 print("The count of positive labels in test: %s",len(list_positive_instances))
 print("The count of negative labels in test: %s",len(list_negative_instances))
 
+
 if len(list_positive_instances) > len(list_negative_instances):
     print("Oversampling the negative instances")
     outfile.write("Oversampling the negative instances")
@@ -150,7 +153,8 @@ negative_labels = [[1,0] for _ in list_negative_instances]
 print("Length of positive labels:%s",positive_labels)
 print("Length of negative labels:%s",negative_labels)
 
-
+p_length = len(positive_labels)
+n_length = len(negative_labels)
 
 
 y_t = np.concatenate([positive_labels, negative_labels],0)
@@ -277,7 +281,7 @@ with tf.Graph().as_default():
         #        writer.add_summary(summaries, step)
 
         # Generate batches
-        batches = data_helpers.batch_iter(
+        batches = data_helpers_single_file.batch_iter(
             list(zip(x_train, y_train)), FLAGS.batch_size, FLAGS.num_epochs)
         # Training loop. For each batch...
         for batch in batches:
@@ -365,3 +369,31 @@ if y_test is not None:
     outfile.write(np.array2string(confusion_matrix(y_test, all_predictions),separator=','))
     #outfile.write(confusion_matrix(y_test, all_predictions))
     outfile.close()
+    try:
+        c_matrix = confusion_matrix(y_test, all_predictions)
+        data_insert = {
+            'name': dbfieldname,
+            'imbalance': str(imbalance_size),
+            'positive_or_negative':pos_or_negative,
+            'train_negative':p_length,
+            'train_positive':n_length,
+            'true_negative':c_matrix[0][0],
+            'false_positive':c_matrix[0][1],
+            'false_negative':c_matrix[1][0],
+            'true_positive':c_matrix[1][1],
+            'accuracy':(correct_predictions/float(len(y_test))),
+            'incorrect':(float(sum(all_predictions != y_test))),
+            'correct':(len(y_test) - float(sum(all_predictions != y_test))),
+            'notes':''
+
+        }
+        sqlInsert = 'Insert into cnn_runs VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+        print('\n')
+        print(sqlInsert)
+        cursor.execute(sqlInsert,data_insert)
+
+    except:
+        print("error inserting")
+
+cursor.close()
+cnx.close()
