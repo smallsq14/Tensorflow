@@ -7,7 +7,8 @@ import time
 import datetime
 import random
 import data_helpers_single_file
-import mysql.connector
+import MySQLdb as mdb
+import sys
 from random import randint
 from sklearn.metrics import precision_recall_fscore_support
 from sklearn.metrics import confusion_matrix
@@ -39,8 +40,6 @@ print("\nParameters:")
 for attr, value in sorted(FLAGS.__flags.items()):
     print("{}={}".format(attr.upper(), value))
 print("")
-cnx = mysql.connector.connect(user='datauser',password='datauser', database='tensorflow')
-cursor = cnx.cursor()
 
 # Data Preparation
 # ==================================================
@@ -370,30 +369,45 @@ if y_test is not None:
     #outfile.write(confusion_matrix(y_test, all_predictions))
     outfile.close()
     try:
+        con = mdb.connect('localhost', 'datauser', 'datauser', 'tensorflow');
+
+        cur = con.cursor()
+
         c_matrix = confusion_matrix(y_test, all_predictions)
         data_insert = {
             'name': dbfieldname,
             'imbalance': str(imbalance_size),
-            'positive_or_negative':pos_or_negative,
-            'train_negative':p_length,
-            'train_positive':n_length,
-            'true_negative':c_matrix[0][0],
-            'false_positive':c_matrix[0][1],
-            'false_negative':c_matrix[1][0],
-            'true_positive':c_matrix[1][1],
-            'accuracy':(correct_predictions/float(len(y_test))),
-            'incorrect':(float(sum(all_predictions != y_test))),
-            'correct':(len(y_test) - float(sum(all_predictions != y_test))),
-            'notes':''
+            'positive_or_negative': pos_or_negative,
+            'train_negative': p_length,
+            'train_positive': n_length,
+            'true_negative': c_matrix[0][0],
+            'false_positive': c_matrix[0][1],
+            'false_negative': c_matrix[1][0],
+            'true_positive': c_matrix[1][1],
+            'accuracy': (correct_predictions / float(len(y_test))),
+            'incorrect': (float(sum(all_predictions != y_test))),
+            'correct': (len(y_test) - float(sum(all_predictions != y_test))),
+            'notes': ''
 
         }
         sqlInsert = 'Insert into cnn_runs VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
         print('\n')
         print(sqlInsert)
-        cursor.execute(sqlInsert,data_insert)
+        cur.execute(sqlInsert, data_insert)
+        #cur.execute("SELECT VERSION()")
 
-    except:
-        print("error inserting")
+        ver = cur.fetchone()
 
-cursor.close()
-cnx.close()
+        #print "Database version : %s " % ver
+
+    except mdb.Error, e:
+
+        print "Error %d: %s" % (e.args[0], e.args[1])
+        sys.exit(1)
+
+    finally:
+
+        if con:
+            con.close()
+
+
