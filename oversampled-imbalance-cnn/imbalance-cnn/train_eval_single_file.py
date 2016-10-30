@@ -27,7 +27,7 @@ tf.flags.DEFINE_float("l2_reg_lambda", 0.0, "L2 regularizaion lambda (default: 0
 
 # Training parameters
 tf.flags.DEFINE_integer("batch_size", 64, "Batch Size (default: 64)")
-tf.flags.DEFINE_integer("num_epochs", 200, "Number of training epochs (default: 200)")
+tf.flags.DEFINE_integer("num_epochs", 100, "Number of training epochs (default: 200)")
 tf.flags.DEFINE_integer("evaluate_every", 100, "Evaluate model on dev set after this many steps (default: 100)")
 tf.flags.DEFINE_integer("checkpoint_every", 100, "Save model after this many steps (default: 100)")
 # Misc Parameters
@@ -47,8 +47,8 @@ print("")
 # Load data
 random_seed = 10
 run_number = 1
-t = 0
-
+t = 6
+p = 1
 rand_seed = randint(0, 9)
 print("Loading data...")
 imbalance_size = 5000
@@ -75,6 +75,10 @@ if t == 4:
 if t == 5:
     imbalance_size = 3500
     pos_or_neg = "negative"
+if t == 6:
+    imbalance_size = 5000
+    pos_or_neg = "positive"
+
 outfile = open('sf_'+str(imbalance_size)+'_' + pos_or_neg + '_results_run_'+str(p)+'.txt', 'w')
 dbfieldname = 'sf_'+str(imbalance_size)+'_' + pos_or_neg + '_results_run_'+str(p)
 outfile.write("Data Resutls for {} {}".format(imbalance_size,pos_or_neg))
