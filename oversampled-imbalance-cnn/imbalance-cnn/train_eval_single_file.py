@@ -379,46 +379,46 @@ for t in range(0,8):
         outfile.write(np.array2string(confusion_matrix(y_test, all_predictions),separator=','))
         #outfile.write(confusion_matrix(y_test, all_predictions))
         outfile.close()
-        try:
-            con = mdb.connect('localhost', 'datauser', 'datauser', 'tensorflow');
-
-            cur = con.cursor()
-
-            c_matrix = confusion_matrix(y_test, all_predictions)
-            data_insert = {
-                'name': dbfieldname,
-                'imbalance': str(imbalance_size),
-                'positive_or_negative': pos_or_negative,
-                'train_negative': p_length,
-                'train_positive': n_length,
-                'true_negative': c_matrix[0][0],
-                'false_positive': c_matrix[0][1],
-                'false_negative': c_matrix[1][0],
-                'true_positive': c_matrix[1][1],
-                'accuracy': (correct_predictions / float(len(y_test))),
-                'incorrect': (float(sum(all_predictions != y_test))),
-                'correct': (len(y_test) - float(sum(all_predictions != y_test))),
-                'notes': ''
-
-            }
-            sqlInsert = 'Insert into cnn_runs VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
-            print('\n')
-            print(sqlInsert)
-            cur.execute(sqlInsert, data_insert)
-            #cur.execute("SELECT VERSION()")
-
-            ver = cur.fetchone()
-
-            #print "Database version : %s " % ver
-
-        except mdb.Error, e:
-
-            print "Error %d: %s" % (e.args[0], e.args[1])
-            sys.exit(1)
-
-        finally:
-
-            if con:
-                con.close()
+        # try:
+        #     con = mdb.connect('localhost', 'datauser', 'datauser', 'tensorflow');
+        #
+        #     cur = con.cursor()
+        #
+        #     c_matrix = confusion_matrix(y_test, all_predictions)
+        #     data_insert = {
+        #         'name': dbfieldname,
+        #         'imbalance': str(imbalance_size),
+        #         'positive_or_negative': pos_or_negative,
+        #         'train_negative': p_length,
+        #         'train_positive': n_length,
+        #         'true_negative': c_matrix[0][0],
+        #         'false_positive': c_matrix[0][1],
+        #         'false_negative': c_matrix[1][0],
+        #         'true_positive': c_matrix[1][1],
+        #         'accuracy': (correct_predictions / float(len(y_test))),
+        #         'incorrect': (float(sum(all_predictions != y_test))),
+        #         'correct': (len(y_test) - float(sum(all_predictions != y_test))),
+        #         'notes': ''
+        #
+        #     }
+        #     sqlInsert = 'Insert into cnn_runs VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+        #     print('\n')
+        #     print(sqlInsert)
+        #     cur.execute(sqlInsert, data_insert)
+        #     #cur.execute("SELECT VERSION()")
+        #
+        #     ver = cur.fetchone()
+        #
+        #     #print "Database version : %s " % ver
+        #
+        # except mdb.Error, e:
+        #
+        #     print "Error %d: %s" % (e.args[0], e.args[1])
+        #     sys.exit(1)
+        #
+        # finally:
+        #
+        #     if con:
+        #         con.close()
 
 
