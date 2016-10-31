@@ -381,7 +381,7 @@ if y_test is not None:
         data_insert = {
             'name': dbfieldname,
             'imbalance': str(imbalance_size),
-            'positive_or_negative': pos_or_negative,
+            'positive_or_negative': pos_or_neg,
             'train_negative': p_length,
             'train_positive': n_length,
             'true_negative': c_matrix[0][0],

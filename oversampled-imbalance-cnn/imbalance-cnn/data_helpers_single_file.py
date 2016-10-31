@@ -39,7 +39,7 @@ def load_data_and_labels(aImbalance,aPolarity):
     #positive_examples = [s.strip() for s in positive_examples]
     #print("length of positive:%s",len(positive_examples))
     positive_examples = []
-    for(dir, dirs, files) in os.walk('./singlefiledata/pos'):
+    for(dir, dirs, files) in os.walk('./singlefiledatatrimmed/pos'):
             for file in files:
                     if fnmatch.fnmatch(file, '*.txt'):
                         positive_examples.append(open(os.path.join(dir,file),"r").read())
@@ -50,7 +50,7 @@ def load_data_and_labels(aImbalance,aPolarity):
     	del positive_examples[aImbalance:]
 	print("lenght of positive imbalanced:%s",len(positive_examples))
     negative_examples = []
-    for (dir, dirs, files) in os.walk('./singlefiledata/neg'):
+    for (dir, dirs, files) in os.walk('./singlefiledatatrimmed/neg'):
         for file in files:
             if fnmatch.fnmatch(file, '*.txt'):
                 negative_examples.append(open(os.path.join(dir, file), "r").read())
