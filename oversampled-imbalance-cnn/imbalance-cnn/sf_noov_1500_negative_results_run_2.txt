@@ -1,0 +1,10 @@
+Data Resutls for 1500 negativeOverall Length:7112
+Total number of test examples: 1000
+All predictions 1000
+y test: 1000
+x_test: 1000
+Incorrect Predictions 107.0
+Correct Predictions 893.0
+Accuracy: 0.893
+Precision, Recall, Fscore[[119, 57],
+ [ 50,774]]

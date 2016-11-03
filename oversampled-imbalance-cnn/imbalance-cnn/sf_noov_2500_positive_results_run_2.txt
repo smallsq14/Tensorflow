@@ -1,0 +1,10 @@
+Data Resutls for 2500 positiveOverall Length:8006
+Total number of test examples: 1000
+All predictions 1000
+y test: 1000
+x_test: 1000
+Incorrect Predictions 119.0
+Correct Predictions 881.0
+Accuracy: 0.881
+Precision, Recall, Fscore[[723, 20],
+ [ 99,158]]
