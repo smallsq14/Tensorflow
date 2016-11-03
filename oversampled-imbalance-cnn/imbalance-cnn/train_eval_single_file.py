@@ -170,15 +170,6 @@ for p in range(0,10):
 
         y_t = np.concatenate([positive_labels, negative_labels],0)
         x_t = np.array(list_positive_instances + list_negative_instances)
-        #for x in range(0,len(x_t)):
-        #    print("Instances:%s",x_t[x])
-
-        #x_t = [data_helpers.clean_str(sent) for sent in x_t]
-
-        # Build vocabulary
-        #max_document_length = max([len(x.split(" ")) for x in x_t])
-        #vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
-        #x = np.array(list(vocab_processor.fit_transform(x_t)))
 
         np.random.seed(10)
         shuffle_indices = np.random.permutation(np.arange(len(y_t)))
@@ -189,7 +180,6 @@ for p in range(0,10):
 
 
         print("Vocabulary Size: {:d}".format(len(vocab_processor.vocabulary_)))
-        #print("Train/Dev split: {:d}/{:d}".format(len(y_train), len(y_dev)))
 
 
         # Training
