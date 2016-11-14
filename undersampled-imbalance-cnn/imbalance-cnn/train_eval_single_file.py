@@ -54,7 +54,7 @@ print("Loading data...")
 imbalance_size = 5000
 pos_or_neg = "positive"
 for p in range(0,10):
-    for t in range(0,8):
+    for t in range(0,6):
         rand_seed = randint(0, 9)
         if t == 0:
             imbalance_size = 1500
@@ -88,8 +88,8 @@ for p in range(0,10):
             imbalance_size = 5000
             pos_or_neg = "positive"
 
-        outfile = open('sf1rus_'+str(imbalance_size)+'_' + pos_or_neg + '_results_run_'+str(p)+'.txt', 'w')
-        dbfieldname = 'sf1rus_'+str(imbalance_size)+'_' + pos_or_neg + '_results_run_'+str(p)
+        outfile = open('sf2rus_'+str(imbalance_size)+'_' + pos_or_neg + '_results_run_'+str(p)+'.txt', 'w')
+        dbfieldname = 'sf2rus_'+str(imbalance_size)+'_' + pos_or_neg + '_results_run_'+str(p)
         outfile.write("Data Resutls for {} {}".format(imbalance_size,pos_or_neg))
         x_text, y = data_helpers_single_file.load_data_and_labels(imbalance_size,pos_or_neg)
 

@@ -1,0 +1,4 @@
+Data Resutls for 2500 positiveNegative before undersampling now: 4655
+Positive before undersampling now: 2176
+Oversampling the negative instancesNegative after undersampling now: 2176
+Overall Length:4352
