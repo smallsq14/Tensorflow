@@ -1,0 +1,4 @@
+Data Resutls for 1500 positiveNegative before oversampling: 5694 
+Positive size befor oversampling: 1312 
+Oversampling the negative instancesNegative after oversampling: 1312 
+Overall Length:2624
