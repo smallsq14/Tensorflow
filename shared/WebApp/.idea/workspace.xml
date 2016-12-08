@@ -44,14 +44,14 @@
       <file leaf-file-name="mysql_adapter.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/../mysql_adapter.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="763">
-              <caret line="70" column="4" selection-start-line="70" selection-start-column="4" selection-end-line="70" selection-end-column="4" />
+            <state relative-caret-position="746">
+              <caret line="73" column="9" selection-start-line="73" selection-start-column="9" selection-end-line="73" selection-end-column="9" />
               <folding>
                 <element signature="e#0#22#0" expanded="true" />
-                <marker date="1481214775794" expanded="true" signature="1790:2039" ph="INSERT INTO `tensorflow`.`cnn_runs`... " />
-                <marker date="1481214775794" expanded="true" signature="1790:2400" ph="INSERT INTO cnn_runs... " />
-                <marker date="1481214775794" expanded="true" signature="1790:2470" ph="INSERT INTO cnn_runs... " />
-                <marker date="1481214775794" expanded="true" signature="2699:2882" ph="INSERT INTO run_groups... " />
+                <marker date="1481215125387" expanded="true" signature="1790:2039" ph="INSERT INTO `tensorflow`.`cnn_runs`... " />
+                <marker date="1481215125387" expanded="true" signature="1790:2400" ph="INSERT INTO cnn_runs... " />
+                <marker date="1481215125387" expanded="true" signature="1790:2470" ph="INSERT INTO cnn_runs... " />
+                <marker date="1481215125387" expanded="true" signature="2699:2882" ph="INSERT INTO run_groups... " />
               </folding>
             </state>
           </provider>
@@ -486,14 +486,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../mysql_adapter.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="763">
-          <caret line="70" column="4" selection-start-line="70" selection-start-column="4" selection-end-line="70" selection-end-column="4" />
+        <state relative-caret-position="746">
+          <caret line="73" column="9" selection-start-line="73" selection-start-column="9" selection-end-line="73" selection-end-column="9" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
-            <marker date="1481214775794" expanded="true" signature="1790:2039" ph="INSERT INTO `tensorflow`.`cnn_runs`... " />
-            <marker date="1481214775794" expanded="true" signature="1790:2400" ph="INSERT INTO cnn_runs... " />
-            <marker date="1481214775794" expanded="true" signature="1790:2470" ph="INSERT INTO cnn_runs... " />
-            <marker date="1481214775794" expanded="true" signature="2699:2882" ph="INSERT INTO run_groups... " />
+            <marker date="1481215125387" expanded="true" signature="1790:2039" ph="INSERT INTO `tensorflow`.`cnn_runs`... " />
+            <marker date="1481215125387" expanded="true" signature="1790:2400" ph="INSERT INTO cnn_runs... " />
+            <marker date="1481215125387" expanded="true" signature="1790:2470" ph="INSERT INTO cnn_runs... " />
+            <marker date="1481215125387" expanded="true" signature="2699:2882" ph="INSERT INTO run_groups... " />
           </folding>
         </state>
       </provider>

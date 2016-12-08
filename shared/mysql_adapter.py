@@ -68,5 +68,7 @@ def insert_run_group(name, timestamp, notes, activeflag):
 def testSql():
     open_connection()
     insert_run_group('test1', '2016-05-05', 'test notes', 1)
-    
+
     cnx.close()
+
+testSql()
