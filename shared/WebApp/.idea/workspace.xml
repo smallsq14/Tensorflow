@@ -47,15 +47,21 @@
       <file leaf-file-name="mysql_adapter.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/../mysql_adapter.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-182">
-              <caret line="23" column="7" selection-start-line="23" selection-start-column="7" selection-end-line="23" selection-end-column="7" />
+            <state relative-caret-position="226">
+              <caret line="110" column="5" selection-start-line="110" selection-start-column="5" selection-end-line="110" selection-end-column="5" />
               <folding>
                 <element signature="e#0#22#0" expanded="true" />
-                <marker date="1481230146683" expanded="true" signature="1965:2214" ph="INSERT INTO `tensorflow`.`cnn_runs`... " />
-                <marker date="1481230146683" expanded="true" signature="1965:2575" ph="INSERT INTO cnn_runs... " />
-                <marker date="1481230146683" expanded="true" signature="1965:2645" ph="INSERT INTO cnn_runs... " />
-                <marker date="1481230146683" expanded="true" signature="2996:3018" ph="INSERT INTO run_groups... " />
-                <marker date="1481230146683" expanded="true" signature="2996:3187" ph="INSERT INTO run_groups... " />
+                <marker date="1481235461957" expanded="true" signature="2515:2764" ph="INSERT INTO `tensorflow`.`cnn_runs`... " />
+                <marker date="1481235461957" expanded="true" signature="2515:3125" ph="INSERT INTO cnn_runs... " />
+                <marker date="1481235461957" expanded="true" signature="2515:3195" ph="INSERT INTO cnn_runs... " />
+                <marker date="1481235461957" expanded="true" signature="3452:3474" ph="INSERT INTO run_groups... " />
+                <marker date="1481235461957" expanded="true" signature="3452:3643" ph="INSERT INTO run_groups... " />
+                <marker date="1481235461957" expanded="true" signature="3961:4088" ph="UPDATE run_g... " />
+                <marker date="1481235461957" expanded="true" signature="3967:4072" ph="INSERT INTO run_groups... " />
+                <marker date="1481235461957" expanded="true" signature="4185:4213" ph="Select * fro... run_group_runs" />
+                <marker date="1481235461957" expanded="true" signature="4185:4255" ph="Select * fro... run_group_runs" />
+                <marker date="1481235461957" expanded="true" signature="4185:4256" ph="Select * fro... run_group_runs" />
+                <marker date="1481235461957" expanded="true" signature="4320:4391" ph="Select * fro... run_group_runs" />
               </folding>
             </state>
           </provider>
@@ -117,8 +123,8 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="2055" />
-    <option name="y" value="67" />
+    <option name="x" value="2227" />
+    <option name="y" value="9" />
     <option name="width" value="1635" />
     <option name="height" value="1000" />
   </component>
@@ -495,7 +501,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="2055" y="67" width="1635" height="1000" extended-state="1" />
+    <frame x="2227" y="9" width="1635" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21371217" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -534,7 +540,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/../mysql_adapter.py</url>
-          <line>77</line>
+          <line>92</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>
@@ -593,15 +599,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../mysql_adapter.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-182">
-          <caret line="23" column="7" selection-start-line="23" selection-start-column="7" selection-end-line="23" selection-end-column="7" />
+        <state relative-caret-position="226">
+          <caret line="110" column="5" selection-start-line="110" selection-start-column="5" selection-end-line="110" selection-end-column="5" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
-            <marker date="1481230146683" expanded="true" signature="1965:2214" ph="INSERT INTO `tensorflow`.`cnn_runs`... " />
-            <marker date="1481230146683" expanded="true" signature="1965:2575" ph="INSERT INTO cnn_runs... " />
-            <marker date="1481230146683" expanded="true" signature="1965:2645" ph="INSERT INTO cnn_runs... " />
-            <marker date="1481230146683" expanded="true" signature="2996:3018" ph="INSERT INTO run_groups... " />
-            <marker date="1481230146683" expanded="true" signature="2996:3187" ph="INSERT INTO run_groups... " />
+            <marker date="1481235461957" expanded="true" signature="2515:2764" ph="INSERT INTO `tensorflow`.`cnn_runs`... " />
+            <marker date="1481235461957" expanded="true" signature="2515:3125" ph="INSERT INTO cnn_runs... " />
+            <marker date="1481235461957" expanded="true" signature="2515:3195" ph="INSERT INTO cnn_runs... " />
+            <marker date="1481235461957" expanded="true" signature="3452:3474" ph="INSERT INTO run_groups... " />
+            <marker date="1481235461957" expanded="true" signature="3452:3643" ph="INSERT INTO run_groups... " />
+            <marker date="1481235461957" expanded="true" signature="3961:4088" ph="UPDATE run_g... " />
+            <marker date="1481235461957" expanded="true" signature="3967:4072" ph="INSERT INTO run_groups... " />
+            <marker date="1481235461957" expanded="true" signature="4185:4213" ph="Select * fro... run_group_runs" />
+            <marker date="1481235461957" expanded="true" signature="4185:4255" ph="Select * fro... run_group_runs" />
+            <marker date="1481235461957" expanded="true" signature="4185:4256" ph="Select * fro... run_group_runs" />
+            <marker date="1481235461957" expanded="true" signature="4320:4391" ph="Select * fro... run_group_runs" />
           </folding>
         </state>
       </provider>
