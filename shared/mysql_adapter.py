@@ -3,7 +3,7 @@ from mysql.connector import errorcode
 
 config_local = {
     'user': 'datauser',
-    'password': 'datauser',
+    'password': '',
     'host': '127.0.0.1',
     'database': 'tensorflow',
     'raise_on_warnings': True
@@ -11,17 +11,17 @@ config_local = {
 
 config_remote = {
     'user': 'datauser',
-    'password': 'datauser',
+    'password': '',
     'host': '73.85.90.204',
-    'port':'7779',
+    'port':7779,
     'database': 'tensorflow',
-    'raise_on_warnings': False
+    'raise_on_warnings': True
 }
 
 
 def open_connection():
     try:
-        cnx = mysql.connector.connect(**config_local)
+       cnx = mysql.connector.connect(**config_remote)
 
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
@@ -76,7 +76,7 @@ def insert_run_group(name, timestamp, notes, activeflag):
                              "VALUES (%(name)s, %(created_date)s, %(notes)s, %(active_flag)s)")
 
         cursor.execute(add_run_group_sql, data_run_group)
-
+        cnx.commit()
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
             print("Something is wrong with your user name or password")
@@ -88,7 +88,7 @@ def insert_run_group(name, timestamp, notes, activeflag):
         cursor.close()
         cnx.close()
 
-    cnx.commit()
+
 
 def testSql():
 
