@@ -1,7 +1,7 @@
 import mysql.connector
 from mysql.connector import errorcode
 
-config = {
+config_local = {
     'user': 'datauser',
     'password': 'datauser',
     'host': '127.0.0.1',
@@ -9,10 +9,20 @@ config = {
     'raise_on_warnings': True
 }
 
+config_remote = {
+    'user': 'datauser',
+    'password': 'datauser',
+    'host': '73.85.90.204',
+    'port':'7779',
+    'database': 'tensorflow',
+    'raise_on_warnings': False
+}
+
 
 def open_connection():
     try:
-        cnx = mysql.connector.connect(**config)
+        cnx = mysql.connector.connect(**config_local)
+
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
             print("Something is wrong with your user name or password")
@@ -52,23 +62,39 @@ def insert_cnn_run(name, imbalance, positive_negative, train_negative, train_pos
     cnx.commit()
 
 def insert_run_group(name, timestamp, notes, activeflag):
-    data_run_group = {
-        'name': name,
-        'created_date': timestamp,
-        'notes': notes,
-        'active_flag': activeflag
-    }
-    add_run_group_sql = ("INSERT INTO run_groups "
-                         "(name, created_date, notes, active_flag) "
-                         "VALUES (%(name)s, %(created_date)s, %(notes)s, %(active_flag)s)")
+    try:
+        cnx = mysql.connector.connect(**config_remote)
+        cursor = cnx.cursor()
+        data_run_group = {
+            'name': name,
+            'created_date': timestamp,
+            'notes': notes,
+            'active_flag': activeflag
+        }
+        add_run_group_sql = ("INSERT INTO run_groups "
+                             "(name, created_date, notes, active_flag) "
+                             "VALUES (%(name)s, %(created_date)s, %(notes)s, %(active_flag)s)")
 
-    cursor.execute(add_run_group_sql, data_run_group)
+        cursor.execute(add_run_group_sql, data_run_group)
+
+    except mysql.connector.Error as err:
+        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+            print("Something is wrong with your user name or password")
+        elif err.errno == errorcode.ER_BAD_DB_ERROR:
+            print("Database does not exist")
+        else:
+            print(err)
+    finally:
+        cursor.close()
+        cnx.close()
+
     cnx.commit()
 
 def testSql():
-    open_connection()
+
     insert_run_group('test1', '2016-05-05', 'test notes', 1)
 
-    cnx.close()
 
-testSql()
+
+if __name__ == '__main__':
+    testSql()
