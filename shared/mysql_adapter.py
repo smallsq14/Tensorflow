@@ -36,6 +36,27 @@ def execute_command(command_sql,command_data):
         cursor.close()
         cnx.close()
 
+def execute_query(command_sql):
+    try:
+        cnx = mysql.connector.connect(**config_remote)
+        cursor = cnx.cursor()
+
+        cursor.execute(command_sql)
+        for (name, created_date) in cursor:
+            print("{}, was created on {:%d %b %Y}".format(
+                name, created_date))
+
+    except mysql.connector.Error as err:
+        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+            print("Bad username or password")
+        elif err.errno == errorcode.ER_BAD_DB_ERROR:
+            print("Database does not exist")
+        else:
+            print(err)
+    finally:
+        cursor.close()
+        cnx.close()
+
 
 def open_connection():
     try:
@@ -90,7 +111,7 @@ def insert_run_group(name, timestamp, notes, activeflag):
                              "(name, created_date, notes, active_flag) "
                              "VALUES (%(name)s, %(created_date)s, %(notes)s, %(active_flag)s)")
 
-        execute_command("",add_run_group_sql, data_run_group)
+        execute_command(add_run_group_sql, data_run_group)
 
 
 def update_run_group(id, name, timestamp, notes, activeflag):
@@ -102,9 +123,41 @@ def update_run_group(id, name, timestamp, notes, activeflag):
         'active_flag': activeflag
     }
     add_run_group_sql = ("UPDATE run_groups "
-                         "SET name = %(name)s, notes=%(notes)s, active_flag=%(active_flag)s where id=%(id)s ")
+                         "SET name = %(name)s, notes=%(notes)s, active_flag=%(active_flag)s where run_group_id=%(id)s ")
 
     execute_command(add_run_group_sql, data_run_group)
+
+def insert_run_group_run(run_group_id, start_time, active_flag, notes):
+        data_run_group_run = {
+            'run_group_id': run_group_id,
+            'start_time': start_time,
+            'active_flag': active_flag,
+            'notes': notes
+        }
+        add_run_group_run_sql = ("INSERT INTO run_group_runs "
+                             "(run_group_id, start_time, active_flag, notes) "
+                             "VALUES (%(run_group_id)s, %(start_time)s, %(active_flag)s, %(notes)s)")
+
+        execute_command(add_run_group_run_sql, data_run_group_run)
+
+
+def update_run_group_run(id, end_time, active_flag, notes):
+    data_run_group_run = {
+        'run_group_run_id': id,
+        'end_time': end_time,
+        'active_flag': active_flag,
+        'notes': notes
+    }
+    add_run_group_sql = ("UPDATE run_group_runs "
+                         "SET end_time = %(end_time)s, notes=%(notes)s, active_flag=%(active_flag)s where run_group_run_id=%(id)s ")
+
+    execute_command(add_run_group_sql, data_run_group_run)
+
+
+def get_active_run_group():
+    query = ("SELECT name, created_date from run_groups where active_flag = 1")
+    execute_query(query)
+
 
 def get_active_run():
     query = ("Select * from run_group_runs where end_time is null and active_flag = 1")
@@ -117,6 +170,9 @@ def get_queued_runs():
 def testSql():
 
     insert_run_group('test1', '2016-05-05', 'test notes', 1)
+    update_run_group(3,'test2', '2016-05-05', 'test notes', 1)
+    insert_run_group_run(3,'2016-05-05 09:00:00',1,'')
+    get_active_run_group()
 
 
 
