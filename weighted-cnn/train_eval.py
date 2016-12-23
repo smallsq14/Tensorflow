@@ -260,7 +260,7 @@ for p in range(0,number_of_classifiers):
 
 
 for t in classifier_list:
-    print("\n {}  {} iteration {}".format(self.checkpoint, self.accuracy, self.iteration))
+    print("\n {}  {} iteration {}".format(t.checkpoint, t.accuracy, t.iteration))
 
 # #Begin Evaluation of Dev
 # x_raw = np.load("dev_x.txt.npy")
