@@ -34,7 +34,7 @@ tf.flags.DEFINE_boolean("log_device_placement", False, "Log placement of ops on 
 
 FLAGS = tf.flags.FLAGS
 FLAGS._parse_flags()
-print("\nParameters:")s
+print("\nParameters:")
 for attr, value in sorted(FLAGS.__flags.items()):
     print("{}={}".format(attr.upper(), value))
 print("")
@@ -92,10 +92,10 @@ for p in range(0,number_of_classifiers):
 
     for x in range(0, len(x_train)):
         if (y_train[x]==pos_value).all():
-           print("Positive Label")
+           #print("Positive Label")
            list_positive_instances.append(x_train[x])
         else:
-           print("Negative label")
+           #print("Negative label")
            list_negative_instances.append(x_train[x])
 
     if (is_first_run):
@@ -122,6 +122,7 @@ for p in range(0,number_of_classifiers):
     negative_labels = [[1,0] for _ in list_negative_instances]
     print("Length of positive labels:%s",positive_labels)
     print("Length of negative labels:%s",negative_labels)
+
 
     y_t = np.concatenate([positive_labels, negative_labels],0)
     x_t = np.array(list_positive_instances + list_negative_instances)
