@@ -111,8 +111,8 @@ for p in range(0,number_of_classifiers):
 
     positive_labels = [[0,1] for _ in list_positive_instances]
     negative_labels = [[1,0] for _ in list_negative_instances]
-    print("Length of positive labels:%s",positive_labels)
-    print("Length of negative labels:%s",negative_labels)
+    print("Length of positive labels:%s",len(positive_labels))
+    print("Length of negative labels:%s",len(negative_labels))
 
 
     y_t = np.concatenate([positive_labels, negative_labels],0)
