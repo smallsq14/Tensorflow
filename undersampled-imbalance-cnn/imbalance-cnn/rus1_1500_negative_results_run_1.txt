@@ -1,0 +1,13 @@
+Data Resutls for 1500 negativeNegative before undersampling now: 1262
+Positive before undersampling now: 4569
+Oversampling the positive instancesPositive after undersampling now: 1262
+Overall Length:2524
+Total number of test examples: 1000
+All predictions 1000
+y test: 1000
+x_test: 1000
+Incorrect Predictions 329.0
+Correct Predictions 671.0
+Accuracy: 0.671
+Precision, Recall, Fscore[[158, 80],
+ [249,513]]

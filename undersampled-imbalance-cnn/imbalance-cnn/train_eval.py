@@ -75,7 +75,7 @@ for p in range(0,10):
         if t == 5:
             imbalance_size = 3500
             pos_or_neg = "negative"
-        outfile = open('rus_'+str(imbalance_size)+'_' + pos_or_neg + '_results_run_'+str(p)+'.txt', 'w')
+        outfile = open('rus1_'+str(imbalance_size)+'_' + pos_or_neg + '_results_run_'+str(p)+'.txt', 'w')
         outfile.write("Data Resutls for {} {}".format(imbalance_size,pos_or_neg))
         x_text, y = data_helpers.load_data_and_labels(imbalance_size,pos_or_neg)
 

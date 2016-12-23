@@ -6,9 +6,7 @@ import os
 import time
 import datetime
 import random
-import data_helpers_single_file
-import MySQLdb as mdb
-import sys
+import data_helpers
 from random import randint
 from sklearn.metrics import precision_recall_fscore_support
 from sklearn.metrics import confusion_matrix
@@ -19,15 +17,15 @@ from tensorflow.contrib import learn
 # ==================================================
 
 # Model Hyperparameters
-tf.flags.DEFINE_integer("embedding_dim", 256, "Dimensionality of character embedding (default: 128)")
+tf.flags.DEFINE_integer("embedding_dim", 128, "Dimensionality of character embedding (default: 128)")
 tf.flags.DEFINE_string("filter_sizes", "3,4,5", "Comma-separated filter sizes (default: '3,4,5')")
-tf.flags.DEFINE_integer("num_filters", 256, "Number of filters per filter size (default: 128)")
+tf.flags.DEFINE_integer("num_filters", 128, "Number of filters per filter size (default: 128)")
 tf.flags.DEFINE_float("dropout_keep_prob", 0.5, "Dropout keep probability (default: 0.5)")
 tf.flags.DEFINE_float("l2_reg_lambda", 0.0, "L2 regularizaion lambda (default: 0.0)")
 
 # Training parameters
 tf.flags.DEFINE_integer("batch_size", 64, "Batch Size (default: 64)")
-tf.flags.DEFINE_integer("num_epochs", 100, "Number of training epochs (default: 200)")
+tf.flags.DEFINE_integer("num_epochs", 200, "Number of training epochs (default: 200)")
 tf.flags.DEFINE_integer("evaluate_every", 100, "Evaluate model on dev set after this many steps (default: 100)")
 tf.flags.DEFINE_integer("checkpoint_every", 100, "Save model after this many steps (default: 100)")
 # Misc Parameters
@@ -41,21 +39,21 @@ for attr, value in sorted(FLAGS.__flags.items()):
     print("{}={}".format(attr.upper(), value))
 print("")
 
+
 # Data Preparation
 # ==================================================
 
 # Load data
 random_seed = 10
-run_number = 1
-t = 6
-p = 2
-print("Loading data...")
-imbalance_size = 5000
-pos_or_neg = "positive"
+run_number = 3
+
 for p in range(0,10):
-    for t in range(0,8):
-        rand_seed = randint(0,9)
-	if t == 0:
+    for t in range(0,4):
+        rand_seed = randint(0, 9)
+        print("Loading data...")
+        imbalance_size = 1500
+        pos_or_neg = "positive"
+        if t == 0:
             imbalance_size = 1500
             pos_or_neg = "positive"
             random_seed = rand_seed
@@ -77,20 +75,9 @@ for p in range(0,10):
         if t == 5:
             imbalance_size = 3500
             pos_or_neg = "negative"
-        if t == 6:
-            imbalance_size = 5000
-            pos_or_neg = "positive"
-        if t == 7:
-            imbalance_size = 5000
-            pos_or_neg = "positive"
-        if t == 8:
-            imbalance_size = 5000
-            pos_or_neg = "positive"
-
-        outfile = open('sf4_'+str(imbalance_size)+'_' + pos_or_neg + '_results_run_'+str(p)+'.txt', 'w')
-        dbfieldname = 'sf4_'+str(imbalance_size)+'_' + pos_or_neg + '_results_run_'+str(p)
+        outfile = open(str(imbalance_size)+'_' + pos_or_neg + '_results_run_'+str(p)+'.txt', 'w')
         outfile.write("Data Resutls for {} {}".format(imbalance_size,pos_or_neg))
-        x_text, y = data_helpers_single_file.load_data_and_labels(imbalance_size,pos_or_neg)
+        x_text, y = data_helpers.load_data_and_labels(imbalance_size,pos_or_neg)
 
         # Build vocabulary
         max_document_length = max([len(x.split(" ")) for x in x_text])
@@ -139,7 +126,6 @@ for p in range(0,10):
         print("The count of positive labels in test: %s",len(list_positive_instances))
         print("The count of negative labels in test: %s",len(list_negative_instances))
 
-
         if len(list_positive_instances) > len(list_negative_instances):
             print("Oversampling the negative instances")
             outfile.write("Oversampling the negative instances")
@@ -164,12 +150,20 @@ for p in range(0,10):
         print("Length of positive labels:%s",positive_labels)
         print("Length of negative labels:%s",negative_labels)
 
-        p_length = len(positive_labels)
-        n_length = len(negative_labels)
+
 
 
         y_t = np.concatenate([positive_labels, negative_labels],0)
         x_t = np.array(list_positive_instances + list_negative_instances)
+        #for x in range(0,len(x_t)):
+        #    print("Instances:%s",x_t[x])
+
+        #x_t = [data_helpers.clean_str(sent) for sent in x_t]
+
+        # Build vocabulary
+        #max_document_length = max([len(x.split(" ")) for x in x_t])
+        #vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
+        #x = np.array(list(vocab_processor.fit_transform(x_t)))
 
         np.random.seed(10)
         shuffle_indices = np.random.permutation(np.arange(len(y_t)))
@@ -180,6 +174,7 @@ for p in range(0,10):
 
 
         print("Vocabulary Size: {:d}".format(len(vocab_processor.vocabulary_)))
+        #print("Train/Dev split: {:d}/{:d}".format(len(y_train), len(y_dev)))
 
 
         # Training
@@ -282,7 +277,7 @@ for p in range(0,10):
                 #        writer.add_summary(summaries, step)
 
                 # Generate batches
-                batches = data_helpers_single_file.batch_iter(
+                batches = data_helpers.batch_iter(
                     list(zip(x_train, y_train)), FLAGS.batch_size, FLAGS.num_epochs)
                 # Training loop. For each batch...
                 for batch in batches:
@@ -334,7 +329,7 @@ for p in range(0,10):
                 predictions = graph.get_operation_by_name("output/predictions").outputs[0]
 
                 # Generate batches for one epoch
-                batches = data_helpers_single_file.batch_iter(list(x_test), FLAGS.batch_size, 1, shuffle=False)
+                batches = data_helpers.batch_iter(list(x_test), FLAGS.batch_size, 1, shuffle=False)
 
                 # Collect the predictions here
                 all_predictions = []
@@ -370,46 +365,3 @@ for p in range(0,10):
             outfile.write(np.array2string(confusion_matrix(y_test, all_predictions),separator=','))
             #outfile.write(confusion_matrix(y_test, all_predictions))
             outfile.close()
-            # try:
-            #     con = mdb.connect('localhost', 'datauser', 'datauser', 'tensorflow');
-            #
-            #     cur = con.cursor()
-            #
-            #     c_matrix = confusion_matrix(y_test, all_predictions)
-            #     data_insert = {
-            #         'name': dbfieldname,
-            #         'imbalance': str(imbalance_size),
-            #         'positive_or_negative': pos_or_negative,
-            #         'train_negative': p_length,
-            #         'train_positive': n_length,
-            #         'true_negative': c_matrix[0][0],
-            #         'false_positive': c_matrix[0][1],
-            #         'false_negative': c_matrix[1][0],
-            #         'true_positive': c_matrix[1][1],
-            #         'accuracy': (correct_predictions / float(len(y_test))),
-            #         'incorrect': (float(sum(all_predictions != y_test))),
-            #         'correct': (len(y_test) - float(sum(all_predictions != y_test))),
-            #         'notes': ''
-            #
-            #     }
-            #     sqlInsert = 'Insert into cnn_runs VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
-            #     print('\n')
-            #     print(sqlInsert)
-            #     cur.execute(sqlInsert, data_insert)
-            #     #cur.execute("SELECT VERSION()")
-            #
-            #     ver = cur.fetchone()
-            #
-            #     #print "Database version : %s " % ver
-            #
-            # except mdb.Error, e:
-            #
-            #     print "Error %d: %s" % (e.args[0], e.args[1])
-            #     sys.exit(1)
-            #
-            # finally:
-            #
-            #     if con:
-            #         con.close()
-
-

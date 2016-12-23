@@ -1,0 +1,13 @@
+Data Resutls for 3500 positiveNegative before oversampling: 5856 
+Positive size befor oversampling: 3150 
+Oversampling the negative instancesNegative after oversampling: 3150 
+Overall Length:6300
+Total number of test examples: 1000
+All predictions 1000
+y test: 1000
+x_test: 1000
+Incorrect Predictions 157.0
+Correct Predictions 843.0
+Accuracy: 0.843
+Precision, Recall, Fscore[[546,104],
+ [ 53,297]]
