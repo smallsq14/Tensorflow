@@ -101,10 +101,10 @@ for p in range(0,number_of_classifiers):
 
 
     print("Undersampling the positive instances")
-    for x in range(0,1000):
+    for x in range(0,len(list_negative_instances)):
         list_positive_balanced.append(list_positive_instances[random.randint(0,len(list_positive_instances)-1)])
     print("Positive size now: {}".format(len(list_negative_balanced)))
-    list_negative_instances = list_minority_negative
+    list_negative_instances = list_negative_instances
     list_positive_instances = list_positive_balanced
 
     #Regenerate the labels
