@@ -13,6 +13,12 @@ from sklearn.metrics import confusion_matrix
 from text_cnn import TextCNN
 from tensorflow.contrib import learn
 
+
+class Classifier(object):
+    def __init__(self, checkpoint=None, accuracy=None, iteration=None):
+        self.checkpoint = checkpoint
+        self.accuracy = accuracy
+        self.iteration = iteration
 # Parameters
 # ==================================================
 
@@ -73,6 +79,8 @@ np.save('dev_x.txt',x_dev)
 print("Writing out y dev")
 np.save('dev_y.txt',y_dev)
 list_minority_negative = []
+classifier_list = []
+
 
 for p in range(0,number_of_classifiers):
     rand_seed = randint(0, 9)
@@ -243,15 +251,16 @@ for p in range(0,number_of_classifiers):
                 if current_step % FLAGS.evaluate_every == 0:
                     print("\nEvaluation:")
                     dev_step(x_dev, y_dev, writer=dev_summary_writer)
-                    print("testing how many times this 1")
+
                 if current_step % FLAGS.checkpoint_every == 0:
                     path = saver.save(sess, checkpoint_prefix, global_step=current_step)
                     print("Saved model checkpoint to {}\n".format(path))
-                    print("testing how many times this 2")
+            classifier_list.append(Classifier(checkpoint=checkpoint_dir,accuracy=cnn.accuracy,iteration=p))
+            print("The Final Accuracy is {}".format(cnn.accuracy))
 
-            print("testing how many times this 3")
 
-
+for t in classifier_list:
+    print("\n {}  {} iteration {}".format(self.checkpoint, self.accuracy, self.iteration))
 
 # #Begin Evaluation of Dev
 # x_raw = np.load("dev_x.txt.npy")
