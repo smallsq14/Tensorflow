@@ -134,7 +134,7 @@ for p in range(0,number_of_classifiers):
 
 
     print("Vocabulary Size: {:d}".format(len(vocab_processor.vocabulary_)))
-    run_accuracy = 0
+    run_accuracy = []
 
     # Training
     # ==================================================
@@ -233,7 +233,7 @@ for p in range(0,number_of_classifiers):
                     [global_step, dev_summary_op, cnn.loss, cnn.accuracy],
                     feed_dict)
                 time_str = datetime.datetime.now().isoformat()
-                run_accuracy = accuracy
+                run_accuracy.append(accuracy)
                 print("DEV {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
             #if writer:
             #        writer.add_summary(summaries, step)
@@ -253,7 +253,7 @@ for p in range(0,number_of_classifiers):
                 if current_step % FLAGS.checkpoint_every == 0:
                     path = saver.save(sess, checkpoint_prefix, global_step=current_step)
                     print("Saved model checkpoint to {}\n".format(path))
-            classifier_list.append(Classifier(checkpoint=checkpoint_dir,accuracy=run_accuracy,iteration=p))
+            classifier_list.append(Classifier(checkpoint=checkpoint_dir,accuracy=run_accuracy[len(run_accuracy)],iteration=p))
             print("The Final Accuracy is {}".format(run_accuracy))
 
 
