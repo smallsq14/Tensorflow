@@ -255,7 +255,7 @@ for p in range(0,number_of_classifiers):
                 if current_step % FLAGS.checkpoint_every == 0:
                     path = saver.save(sess, checkpoint_prefix, global_step=current_step)
                     print("Saved model checkpoint to {}\n".format(path))
-            classifier_list.append(Classifier(checkpoint=checkpoint_dir,accuracy=run_accuracy[len(run_accuracy)],iteration=p))
+            classifier_list.append(Classifier(checkpoint=checkpoint_dir,accuracy=run_accuracy[len(run_accuracy)-1],iteration=p))
             print("The Final Accuracy is {}".format(run_accuracy))
 
 
