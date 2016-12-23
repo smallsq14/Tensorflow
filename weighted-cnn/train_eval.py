@@ -48,10 +48,6 @@ random_seed = 10
 run_number = 3
 number_of_classifiers = 10
 
-
-
-outfile = open(str(imbalance_size)+'_' + pos_or_neg + '_results_run_'+str(p)+'.txt', 'w')
-outfile.write("Data Resutls for {} {}".format(imbalance_size,pos_or_neg))
 x_text, y = data_helpers.load_data_and_labels(imbalance_size,pos_or_neg)
 
 # Build vocabulary
