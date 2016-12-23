@@ -72,7 +72,6 @@ print("Writing out x dev")
 np.save('dev_x.txt',x_dev)
 print("Writing out y dev")
 np.save('dev_y.txt',y_dev)
-is_first_run = true
 list_minority_negative = []
 
 for p in range(0,number_of_classifiers):
@@ -93,10 +92,6 @@ for p in range(0,number_of_classifiers):
         else:
            #print("Negative label")
            list_negative_instances.append(x_train[x])
-
-    if (is_first_run):
-        list_minority_negative = list_negative_instances[:-1000]
-        is_first_run = false
 
 
 
