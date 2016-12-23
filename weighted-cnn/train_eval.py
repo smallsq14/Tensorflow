@@ -196,9 +196,6 @@ for p in range(0,number_of_classifiers):
                 os.makedirs(checkpoint_dir)
             saver = tf.train.Saver(tf.all_variables())
 
-            #Set the Accuracy
-            print("trs-This is the cnn accuracy summary{}".format(cnn.accuracy))
-            run_accuracy = cnn.accuracy
             print("Checkpoint Dir is {}".format(out_dir))
 
             # Write vocabulary
@@ -220,7 +217,7 @@ for p in range(0,number_of_classifiers):
                     [train_op, global_step, train_summary_op, cnn.loss, cnn.accuracy],
                     feed_dict)
                 time_str = datetime.datetime.now().isoformat()
-                print("{}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+                print("TRAIN {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
                 train_summary_writer.add_summary(summaries, step)
 
             def dev_step(x_batch, y_batch, writer=None):
@@ -237,7 +234,7 @@ for p in range(0,number_of_classifiers):
                     feed_dict)
                 time_str = datetime.datetime.now().isoformat()
                 run_accuracy = accuracy
-                print("{}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+                print("DEV {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
             #if writer:
             #        writer.add_summary(summaries, step)
 
