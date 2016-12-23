@@ -48,7 +48,7 @@ random_seed = 10
 run_number = 3
 number_of_classifiers = 10
 
-x_text, y = data_helpers.load_data_and_labels(imbalance_size,pos_or_neg)
+x_text, y = data_helpers.load_data_and_labels(1000,"negative")
 
 # Build vocabulary
 max_document_length = max([len(x.split(" ")) for x in x_text])
