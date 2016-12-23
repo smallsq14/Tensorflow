@@ -234,6 +234,8 @@ for p in range(0,number_of_classifiers):
                     feed_dict)
                 time_str = datetime.datetime.now().isoformat()
                 run_accuracy.append(accuracy)
+                print("Run Accuracy List:")
+                print(run_accuracy)
                 print("DEV {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
             #if writer:
             #        writer.add_summary(summaries, step)
