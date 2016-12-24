@@ -259,68 +259,73 @@ for p in range(0,number_of_classifiers):
             print("The Final Accuracy is {}".format(run_accuracy))
 
 
+#Print Classifier List and Sort
 for t in classifier_list:
     print("\n {}  {} iteration {}".format(t.checkpoint, t.accuracy, t.iteration))
+classifier_list.sort(key=lambda x: x.accuracy, reverse=True)
+print("\nSelected Classifier {} has accuracy {}".format(classifier_list[0].checkpoint, classifier_list[0].accuracy))
 
-# #Begin Evaluation of Dev
-# x_raw = np.load("dev_x.txt.npy")
-# y_test = np.load("dev_y.txt.npy")
+
+
+#Begin Evaluation of Dev
+x_raw = np.load("dev_x.txt.npy")
+y_test = np.load("dev_y.txt.npy")
 # y_test = np.argmax(y_test, axis=1)
 #
-# # Map data into vocabulary
-# vocab_path = os.path.join(checkpoint_dir, "..", "vocab")
-# vocab_processor = learn.preprocessing.VocabularyProcessor.restore(vocab_path)
-# x_test = np.load("dev_x.txt.npy")
+# Map data into vocabulary
+vocab_path = os.path.join(checkpoint_dir, "..", "vocab")
+vocab_processor = learn.preprocessing.VocabularyProcessor.restore(vocab_path)
+x_test = np.load("dev_x.txt.npy")
 #
 # print("\nEvaluating...\n")
 #
 # # Evaluation
 # # ==================================================
-# checkpoint_file = tf.train.latest_checkpoint(checkpoint_dir)
-# graph = tf.Graph()
-# with graph.as_default():
-#     session_conf = tf.ConfigProto(
-#       allow_soft_placement=FLAGS.allow_soft_placement,
-#       log_device_placement=FLAGS.log_device_placement)
-#     sess = tf.Session(config=session_conf)
-#     with sess.as_default():
-#         # Load the saved meta graph and restore variables
-#         saver = tf.train.import_meta_graph("{}.meta".format(checkpoint_file))
-#         saver.restore(sess, checkpoint_file)
+checkpoint_file = tf.train.latest_checkpoint(classifier_list[0].checkpoint)
+graph = tf.Graph()
+with graph.as_default():
+    session_conf = tf.ConfigProto(
+      allow_soft_placement=FLAGS.allow_soft_placement,
+      log_device_placement=FLAGS.log_device_placement)
+    sess = tf.Session(config=session_conf)
+    with sess.as_default():
+        # Load the saved meta graph and restore variables
+        saver = tf.train.import_meta_graph("{}.meta".format(checkpoint_file))
+        saver.restore(sess, checkpoint_file)
 #
 #         # Get the placeholders from the graph by name
-#         input_x = graph.get_operation_by_name("input_x").outputs[0]
-#         # input_y = graph.get_operation_by_name("input_y").outputs[0]
-#         dropout_keep_prob = graph.get_operation_by_name("dropout_keep_prob").outputs[0]
+        input_x = graph.get_operation_by_name("input_x").outputs[0]
+        # input_y = graph.get_operation_by_name("input_y").outputs[0]
+        dropout_keep_prob = graph.get_operation_by_name("dropout_keep_prob").outputs[0]
 #
 #         # Tensors we want to evaluate
-#         predictions = graph.get_operation_by_name("output/predictions").outputs[0]
+        predictions = graph.get_operation_by_name("output/predictions").outputs[0]
 #
 #         # Generate batches for one epoch
-#         batches = data_helpers.batch_iter(list(x_test), FLAGS.batch_size, 1, shuffle=False)
+        batches = data_helpers.batch_iter(list(x_test), FLAGS.batch_size, 1, shuffle=False)
 #
 #         # Collect the predictions here
-#         all_predictions = []
+        all_predictions = []
 #     #print ("Number of batches: %s",len(batches))
-#         for x_test_batch in batches:
-#             batch_predictions = sess.run(predictions, {input_x: x_test_batch, dropout_keep_prob: 1.0})
-#             all_predictions = np.concatenate([all_predictions, batch_predictions])
+        for x_test_batch in batches:
+            batch_predictions = sess.run(predictions, {input_x: x_test_batch, dropout_keep_prob: 1.0})
+            all_predictions = np.concatenate([all_predictions, batch_predictions])
 #
-# # Print accuracy if y_test is defined
-# if y_test is not None:
-#     print("***************************************")
-#     print("***********Results*********************")
-#     #print("y_test: %s",y_test)
-#     #print("x_test: %s",x_test)
-#     correct_predictions = float(sum(all_predictions == y_test))
-#     print("Total number of test examples: {}".format(len(y_test)))
-#     print("All predictions%S",len(all_predictions))
-#     print("y test: %s",len(y_test))
-#     print("x_test: %s",len(x_test))
-#     print("Incorrect Predictions %s", float(sum(all_predictions != y_test)))
-#     print("Correct Predictions %s", len(y_test) - float(sum(all_predictions != y_test)))
-#     print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
-#     print("Precision, Recall, Fscore")
+ # Print accuracy if y_test is defined
+if y_test is not None:
+    print("***************************************")
+    print("***********Results*********************")
+    #print("y_test: %s",y_test)
+    #print("x_test: %s",x_test)
+    correct_predictions = float(sum(all_predictions == y_test))
+    print("Total number of test examples: {}".format(len(y_test)))
+    print("All predictions%S",len(all_predictions))
+    print("y test: %s",len(y_test))
+    print("x_test: %s",len(x_test))
+    print("Incorrect Predictions %s", float(sum(all_predictions != y_test)))
+    print("Correct Predictions %s", len(y_test) - float(sum(all_predictions != y_test)))
+    print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
+    print("Precision, Recall, Fscore")
 #     outfile.write("\nTotal number of test examples: {}".format(len(y_test)))
 #     outfile.write("\nAll predictions {}".format(len(all_predictions)))
 #     outfile.write("\ny test: {}".format(len(y_test)))
