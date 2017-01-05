@@ -349,6 +349,8 @@ if y_test is not None:
         i = i + 1
     print ("Correct Predictions:{}".format(correct_predictions))
     print(all_predictions_fixed)
+    all_predictions_fixed = np.array(all_predictions_fixed)
+    print(all_predictions_fixed)
     correct_predictions = float(sum(all_predictions_fixed == y_test))
     print("Total number of test examples: {}".format(len(y_test)))
     print("All predictions%S",len(all_predictions_fixed))
