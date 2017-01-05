@@ -344,8 +344,7 @@ for p in range(0,10):
             print("***********Results*********************")
             #print("y_test: %s",y_test)
             #print("x_test: %s",x_test)
-            print("Length of All Predictions {}".format(len(all_predictions)))
-            print("Length of y test {}".format(len(y_test)))
+
             correct_predictions = float(sum(all_predictions == y_test))
             print("Total number of test examples: {}".format(len(y_test)))
             print("All predictions%S",len(all_predictions))

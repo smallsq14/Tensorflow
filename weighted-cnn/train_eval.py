@@ -332,6 +332,8 @@ if y_test is not None:
     print("Y Test")
     print(y_test)
     print("End Y Test")
+    print("Length of All Predictions {}".format(len(all_predictions)))
+    print("Length of y test {}".format(len(y_test)))
     correct_predictions = float(sum(all_predictions == y_test))
     print("Total number of test examples: {}".format(len(y_test)))
     print("All predictions%S",len(all_predictions))
