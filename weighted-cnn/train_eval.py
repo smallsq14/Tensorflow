@@ -338,23 +338,28 @@ if y_test is not None:
     correct_predictions = 0
     pos_lab = [0, 1]
     neg_lab = [1, 0]
+    all_predictions_fixed = []
     for p in all_predictions:
         if ((p == 0) and np.all((y_test[i] == neg_lab))):
             correct_predictions = correct_predictions + 1
+            all_predictions_fixed.append(neg_lab)
         if ((p == 1) and np.all((y_test[i] == pos_lab))):
             correct_predictions = correct_predictions + 1
+            all_predictions_fixed.append(pos_lab)
         i = i + 1
     print ("Correct Predictions:{}".format(correct_predictions))
 
-    #correct_predictions = float(sum(all_predictions == y_test))
+    correct_predictions = float(sum(all_predictions_fixed == y_test))
     print("Total number of test examples: {}".format(len(y_test)))
-    print("All predictions%S",len(all_predictions))
+    print("All predictions%S",len(all_predictions_fixed))
     print("y test: %s",len(y_test))
     print("x_test: %s",len(x_test))
-    print("Incorrect Predictions %s", float(sum(all_predictions != y_test)))
-    print("Correct Predictions %s", len(y_test) - float(sum(all_predictions != y_test)))
+    print("Incorrect Predictions %s", len(y_test) - correct_predictions)
+    print("Correct Predictions %s", len(y_test) - float(sum(all_predictions_fixed != y_test)))
     print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
     print("Precision, Recall, Fscore")
+    print(confusion_matrix(y_test, all_predictions_fixed))
+    print(precision_recall_fscore_support(y_test, all_predictions_fixed, average='micro'))
 #     outfile.write("\nTotal number of test examples: {}".format(len(y_test)))
 #     outfile.write("\nAll predictions {}".format(len(all_predictions)))
 #     outfile.write("\ny test: {}".format(len(y_test)))
