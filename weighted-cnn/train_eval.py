@@ -339,9 +339,9 @@ if y_test is not None:
     pos_lab = [0, 1]
     neg_lab = [1, 0]
     for p in all_predictions:
-        if ((p == 0) and (y_test[i] == neg_lab)):
+        if ((p == 0) and np.all((y_test[i] == neg_lab))):
             correct_predictions = correct_predictions + 1
-        if ((p == 1) and (y_test[i] == pos_lab)):
+        if ((p == 1) and np.all((y_test[i] == pos_lab))):
             correct_predictions = correct_predictions + 1
         i = i + 1
     print ("Correct Predictions:{}".format(correct_predictions))
