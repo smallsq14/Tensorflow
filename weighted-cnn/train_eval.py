@@ -334,7 +334,19 @@ if y_test is not None:
     print("End Y Test")
     print("Length of All Predictions {}".format(len(all_predictions)))
     print("Length of y test {}".format(len(y_test)))
-    correct_predictions = float(sum(all_predictions == y_test))
+    i = 0
+    correct_predictions = 0
+    pos_lab = [0, 1]
+    neg_lab = [1, 0]
+    for p in all_predictions:
+        if ((p == 0) and (y_test[i] == neg_lab)):
+            correct_predictions = correct_predictions + 1
+        if ((p == 1) and (y_test[i] == pos_lab)):
+            correct_predictions = correct_predictions + 1
+        i = i + 1
+    print ("Correct Predictions:{}".format(correct_predictions))
+
+    #correct_predictions = float(sum(all_predictions == y_test))
     print("Total number of test examples: {}".format(len(y_test)))
     print("All predictions%S",len(all_predictions))
     print("y test: %s",len(y_test))
