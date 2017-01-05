@@ -73,10 +73,13 @@ y_shuffled = y[shuffle_indices]
 x_train, x_dev = x_shuffled[:-1000], x_shuffled[-1000:]
 y_train, y_dev = y_shuffled[:-1000], y_shuffled[-1000:]
 
-
+np_dev_x = x_dev
+np_dev_y = y_dev
 print("Writing out x dev")
+print(x_dev)
 np.save('dev_x.txt',x_dev)
 print("Writing out y dev")
+print(y_dev)
 np.save('dev_y.txt',y_dev)
 list_minority_negative = []
 classifier_list = []
@@ -270,7 +273,8 @@ print("\nSelected Classifier {} has accuracy {}".format(classifier_list[0].check
 #Begin Evaluation of Dev
 x_raw = np.load("dev_x.txt.npy")
 y_test = np.load("dev_y.txt.npy")
-
+x_raw = np_dev_x
+y_test = np_dev_y
 print ("X TEST\n")
 print(x_raw)
 print ("End X RAW\n")
@@ -280,6 +284,7 @@ print ("End X RAW\n")
 vocab_path = os.path.join(classifier_list[0].checkpoint, "..", "vocab")
 vocab_processor = learn.preprocessing.VocabularyProcessor.restore(vocab_path)
 x_test = np.load("dev_x.txt.npy")
+x_test = np_dev_x
 #
 # print("\nEvaluating...\n")
 #
