@@ -270,10 +270,14 @@ print("\nSelected Classifier {} has accuracy {}".format(classifier_list[0].check
 #Begin Evaluation of Dev
 x_raw = np.load("dev_x.txt.npy")
 y_test = np.load("dev_y.txt.npy")
+
+print ("X TEST\n")
+print(x_raw)
+print ("End X RAW\n")
 # y_test = np.argmax(y_test, axis=1)
 #
 # Map data into vocabulary
-vocab_path = os.path.join(checkpoint_dir, "..", "vocab")
+vocab_path = os.path.join(classifier_list[0].checkpoint, "..", "vocab")
 vocab_processor = learn.preprocessing.VocabularyProcessor.restore(vocab_path)
 x_test = np.load("dev_x.txt.npy")
 #
