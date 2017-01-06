@@ -52,7 +52,7 @@ print("")
 # Load data
 random_seed = 10
 run_number = 3
-number_of_classifiers = 2
+number_of_classifiers = 4
 
 x_text, y = data_helpers.load_data_and_labels(1000,"negative")
 
@@ -269,24 +269,8 @@ for t in classifier_list:
 classifier_list.sort(key=lambda x: x.accuracy, reverse=True)
 print("\nSelected Classifier {} has accuracy {}".format(classifier_list[0].checkpoint, classifier_list[0].accuracy))
 
-
-
-#Begin Evaluation of Dev
-#x_raw = np.load("dev_x.txt.npy")
-#y_test = np.load("dev_y.txt.npy")
-
 y_test = np_dev_y
 x_test = np_dev_x
-print ("X TEST\n")
-print(x_test)
-print ("End X RAW\n")
-
-print ("Y TEST\n")
-print(y_test)
-
-
-print ("End Y RAW\n")
-# y_test = np.argmax(y_test, axis=1)
 #
 # Map data into vocabulary
 vocab_path = os.path.join(classifier_list[0].checkpoint, "..", "vocab")
@@ -326,36 +310,16 @@ with graph.as_default():
         for x_test_batch in batches:
             batch_predictions = sess.run(predictions, {input_x: x_test_batch, dropout_keep_prob: 1.0})
             all_predictions = np.concatenate([all_predictions, batch_predictions])
-#
- # Print accuracy if y_test is defined
-
 
 if y_test is not None:
     print("***************************************")
     print("***********Results*********************")
-    #print("y_test: %s",y_test)
-    #print("x_test: %s",x_test)
     print("All Predictions:\n")
     print (all_predictions)
     print (y_test)
     print("--End All Predictions\m")
     print("Length of All Predictions {}".format(len(all_predictions)))
     print("Length of y test {}".format(len(y_test)))
-    #i = 0
-    #correct_predictions = 0
-    #pos_lab = [0,1]
-    #neg_lab = [1,0]
-    #all_predictions_fixed = []
-    #for p in all_predictions:
-    #    if ((p == 0) and np.all((y_test[i] == neg_lab))):
-    #        correct_predictions = correct_predictions + 1
-    #        all_predictions_fixed.append(neg_lab)
-    #    if ((p == 1) and np.all((y_test[i] == pos_lab))):
-    #        correct_predictions = correct_predictions + 1
-    #        all_predictions_fixed.append(pos_lab)
-    #    i = i + 1
-    #print ("Correct Predictions:{}".format(correct_predictions))
-    #print(all_predictions_fixed)
     correct_predictions = float(np.sum(all_predictions == y_test))
     print("Total number of test examples: {}".format(len(y_test)))
     print("All predictions%S",len(all_predictions))
