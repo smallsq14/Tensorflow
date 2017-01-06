@@ -358,7 +358,7 @@ if y_test is not None:
     #print(all_predictions_fixed)
     correct_predictions = float(np.sum(all_predictions == y_test))
     print("Total number of test examples: {}".format(len(y_test)))
-    print("All predictions%S",len(all_predictions_fixed))
+    print("All predictions%S",len(all_predictions))
     print("y test: {}".format(len(y_test)))
     print("x_test: {}".format(len(x_test)))
     print("Incorrect Predictions %s", len(y_test) - correct_predictions)
