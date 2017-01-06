@@ -75,12 +75,13 @@ y_train, y_dev = y_shuffled[:-1000], y_shuffled[-1000:]
 
 np_dev_x = x_dev
 np_dev_y = y_dev
+
 print("Writing out x dev")
-print(x_dev)
-np.save('dev_x.txt',x_dev)
+print(np_dev_x)
+#np.save('dev_x.txt',x_dev)
 print("Writing out y dev")
-print(y_dev)
-np.save('dev_y.txt',y_dev)
+print(np_dev_y)
+#np.save('dev_y.txt',y_dev)
 list_minority_negative = []
 classifier_list = []
 
@@ -271,22 +272,28 @@ print("\nSelected Classifier {} has accuracy {}".format(classifier_list[0].check
 
 
 #Begin Evaluation of Dev
-x_raw = np.load("dev_x.txt.npy")
-y_test = np.load("dev_y.txt.npy")
-x_raw = np_dev_x
+#x_raw = np.load("dev_x.txt.npy")
+#y_test = np.load("dev_y.txt.npy")
+
 y_test = np_dev_y
+x_test = np_dev_x
 print ("X TEST\n")
-print(x_raw)
+print(x_test)
 print ("End X RAW\n")
+
+print ("Y TEST\n")
+print(y_test)
+fixed_y_test = []
+
+print ("End Y RAW\n")
 # y_test = np.argmax(y_test, axis=1)
 #
 # Map data into vocabulary
 vocab_path = os.path.join(classifier_list[0].checkpoint, "..", "vocab")
 vocab_processor = learn.preprocessing.VocabularyProcessor.restore(vocab_path)
-x_test = np.load("dev_x.txt.npy")
-x_test = np_dev_x
+
 #
-# print("\nEvaluating...\n")
+print("\nEvaluating...\n")
 #
 # # Evaluation
 # # ==================================================
@@ -321,43 +328,45 @@ with graph.as_default():
             all_predictions = np.concatenate([all_predictions, batch_predictions])
 #
  # Print accuracy if y_test is defined
+
+
 if y_test is not None:
+
+    fixed_y_test = np.squeeze(np.asarray(y_test))
+    print fixed_y__
+
     print("***************************************")
     print("***********Results*********************")
     #print("y_test: %s",y_test)
     #print("x_test: %s",x_test)
     print("All Predictions:\n")
     print (all_predictions)
+    print (y_test)
     print("--End All Predictions\m")
-    print("Y Test")
-    print(y_test)
-    print("End Y Test")
     print("Length of All Predictions {}".format(len(all_predictions)))
     print("Length of y test {}".format(len(y_test)))
-    i = 0
-    correct_predictions = 0
-    pos_lab = [0,1]
-    neg_lab = [1,0]
-    all_predictions_fixed = []
-    for p in all_predictions:
-        if ((p == 0) and np.all((y_test[i] == neg_lab))):
-            correct_predictions = correct_predictions + 1
-            all_predictions_fixed.append(neg_lab)
-        if ((p == 1) and np.all((y_test[i] == pos_lab))):
-            correct_predictions = correct_predictions + 1
-            all_predictions_fixed.append(pos_lab)
-        i = i + 1
+    #i = 0
+    #correct_predictions = 0
+    #pos_lab = [0,1]
+    #neg_lab = [1,0]
+    #all_predictions_fixed = []
+    #for p in all_predictions:
+    #    if ((p == 0) and np.all((y_test[i] == neg_lab))):
+    #        correct_predictions = correct_predictions + 1
+    #        all_predictions_fixed.append(neg_lab)
+    #    if ((p == 1) and np.all((y_test[i] == pos_lab))):
+    #        correct_predictions = correct_predictions + 1
+    #        all_predictions_fixed.append(pos_lab)
+    #    i = i + 1
     print ("Correct Predictions:{}".format(correct_predictions))
     print(all_predictions_fixed)
-    all_predictions_fixed = np.asmatrix(np.asarray(all_predictions_fixed))
-    print(all_predictions_fixed)
-    correct_predictions = float(np.sum(all_predictions_fixed == y_test))
+    correct_predictions = float(np.sum(all_predictions == y_test))
     print("Total number of test examples: {}".format(len(y_test)))
     print("All predictions%S",len(all_predictions_fixed))
-    print("y test: %s",len(y_test))
-    print("x_test: %s",len(x_test))
+    print("y test: {}".format(len(y_test)))
+    print("x_test: {}".format(len(x_test)))
     print("Incorrect Predictions %s", len(y_test) - correct_predictions)
-    print("Correct Predictions %s", len(y_test) - float(np.sum(all_predictions_fixed != y_test)))
+    print("Correct Predictions %s", len(y_test) - float(np.sum(all_predictions != y_test)))
     print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
     print("Precision, Recall, Fscore")
     print(confusion_matrix(y_test, all_predictions_fixed))
