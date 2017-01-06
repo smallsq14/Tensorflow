@@ -336,8 +336,8 @@ if y_test is not None:
     print("Length of y test {}".format(len(y_test)))
     i = 0
     correct_predictions = 0
-    pos_lab = [0, 1]
-    neg_lab = [1, 0]
+    pos_lab = [0,1]
+    neg_lab = [1,0]
     all_predictions_fixed = []
     for p in all_predictions:
         if ((p == 0) and np.all((y_test[i] == neg_lab))):
@@ -349,7 +349,7 @@ if y_test is not None:
         i = i + 1
     print ("Correct Predictions:{}".format(correct_predictions))
     print(all_predictions_fixed)
-    all_predictions_fixed = np.array(all_predictions_fixed)
+    all_predictions_fixed = np.asmatrix(np.asarray(all_predictions_fixed))
     print(all_predictions_fixed)
     correct_predictions = float(sum(all_predictions_fixed == y_test))
     print("Total number of test examples: {}".format(len(y_test)))
