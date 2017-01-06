@@ -331,10 +331,6 @@ with graph.as_default():
 
 
 if y_test is not None:
-
-    fixed_y_test = np.squeeze(np.asarray(y_test))
-    print fixed_y__
-
     print("***************************************")
     print("***********Results*********************")
     #print("y_test: %s",y_test)
