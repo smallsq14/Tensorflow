@@ -283,7 +283,7 @@ print ("End X RAW\n")
 
 print ("Y TEST\n")
 print(y_test)
-fixed_y_test = []
+
 
 print ("End Y RAW\n")
 # y_test = np.argmax(y_test, axis=1)
@@ -291,7 +291,7 @@ print ("End Y RAW\n")
 # Map data into vocabulary
 vocab_path = os.path.join(classifier_list[0].checkpoint, "..", "vocab")
 vocab_processor = learn.preprocessing.VocabularyProcessor.restore(vocab_path)
-
+y_test = np.argmax(y_test, axis=1)
 #
 print("\nEvaluating...\n")
 #
