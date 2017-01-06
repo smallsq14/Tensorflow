@@ -365,7 +365,7 @@ if y_test is not None:
     print("Correct Predictions %s", len(y_test) - float(np.sum(all_predictions != y_test)))
     print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
     print("Precision, Recall, Fscore")
-    print(confusion_matrix(y_test, all_predictions_fixed))
+    print(confusion_matrix(y_test, all_predictions))
     print(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
 #     outfile.write("\nTotal number of test examples: {}".format(len(y_test)))
 #     outfile.write("\nAll predictions {}".format(len(all_predictions)))
