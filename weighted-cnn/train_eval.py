@@ -354,8 +354,8 @@ if y_test is not None:
     #        correct_predictions = correct_predictions + 1
     #        all_predictions_fixed.append(pos_lab)
     #    i = i + 1
-    print ("Correct Predictions:{}".format(correct_predictions))
-    print(all_predictions_fixed)
+    #print ("Correct Predictions:{}".format(correct_predictions))
+    #print(all_predictions_fixed)
     correct_predictions = float(np.sum(all_predictions == y_test))
     print("Total number of test examples: {}".format(len(y_test)))
     print("All predictions%S",len(all_predictions_fixed))
@@ -366,7 +366,7 @@ if y_test is not None:
     print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
     print("Precision, Recall, Fscore")
     print(confusion_matrix(y_test, all_predictions_fixed))
-    print(precision_recall_fscore_support(y_test, all_predictions_fixed, average='micro'))
+    print(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
 #     outfile.write("\nTotal number of test examples: {}".format(len(y_test)))
 #     outfile.write("\nAll predictions {}".format(len(all_predictions)))
 #     outfile.write("\ny test: {}".format(len(y_test)))
