@@ -51,10 +51,9 @@ print("")
 
 # Load data
 random_seed = 10
-run_number = 3
-number_of_classifiers = 4
+number_of_classifiers = 2
 
-x_text, y = data_helpers.load_data_and_labels(1000,"negative")
+x_text, y = data_helpers.load_data_and_labels()
 
 # Build vocabulary
 max_document_length = max([len(x.split(" ")) for x in x_text])
@@ -73,6 +72,7 @@ y_shuffled = y[shuffle_indices]
 x_train, x_dev = x_shuffled[:-1000], x_shuffled[-1000:]
 y_train, y_dev = y_shuffled[:-1000], y_shuffled[-1000:]
 
+
 np_dev_x = x_dev
 np_dev_y = y_dev
 
@@ -85,64 +85,59 @@ print(np_dev_y)
 list_minority_negative = []
 classifier_list = []
 
+pos_value = np.array([0, 1])
+neg_value = np.array([1, 0])
+
+list_negative_instances_unchanging = []
+list_positive_instances = []
+list_negative_instances = []
+
+for x in range(0, len(x_train)):
+    if (y_train[x] == pos_value).all():
+        # print("Positive Label")
+        list_positive_instances.append(x_train[x])
+    else:
+        # print("Negative label")
+        list_negative_instances.append(x_train[x])
+#final value
+list_negative_instances_unchanging = list_negative_instances[:1000]
 
 for p in range(0,number_of_classifiers):
     rand_seed = randint(0, 9)
-    #Get count of positive negative in train set
-    pos_value = np.array([0,1])
-    neg_value = np.array([1,0])
-
-    list_positive_instances = []
-    list_negative_instances = []
+    list_positive_instances_temp = []
+    list_negative_instances_temp = []
     list_positive_balanced = []
     list_negative_balanced = []
 
-    for x in range(0, len(x_train)):
-        if (y_train[x]==pos_value).all():
-           #print("Positive Label")
-           list_positive_instances.append(x_train[x])
-        else:
-           #print("Negative label")
-           list_negative_instances.append(x_train[x])
-
-
-
-    print("The count of positive labels in test: %s",len(list_positive_instances))
-    print("The count of negative labels in test: %s",len(list_negative_instances))
-
-
-
+    print("The count of negative labels in test unchanging: %s", len(list_negative_instances_unchanging))
     print("Undersampling the positive instances")
     for x in range(0,len(list_negative_instances)):
         list_positive_balanced.append(list_positive_instances[random.randint(0,len(list_positive_instances)-1)])
-    print("Positive size now: {}".format(len(list_negative_balanced)))
-    list_negative_instances = list_negative_instances
+    print("Positive size now: {}".format(len(list_positive_balanced)))
+    list_negative_instances = list_negative_instances_unchanging
     list_positive_instances = list_positive_balanced
-
+    print("The count of positive labels in test after undersampling: %s",len(list_negative_instances))
+    print("The count of negative labels in test after undersampling: %s",len(list_positive_instances))
     #Regenerate the labels
-
     positive_labels = [[0,1] for _ in list_positive_instances]
     negative_labels = [[1,0] for _ in list_negative_instances]
     print("Length of positive labels:%s",len(positive_labels))
     print("Length of negative labels:%s",len(negative_labels))
-
-
     y_t = np.concatenate([positive_labels, negative_labels],0)
     x_t = np.array(list_positive_instances + list_negative_instances)
-
     np.random.seed(rand_seed)
     shuffle_indices = np.random.permutation(np.arange(len(y_t)))
     x_train = x_t[shuffle_indices]
     y_train = y_t[shuffle_indices]
+    print("The train set sizes: ")
+    print("X Train {}".format(len(x_train)))
+    print("Y Train {}".format(len(y_train)))
+
     print("Overall Length:%s", len(y_train))
-
-
     print("Vocabulary Size: {:d}".format(len(vocab_processor.vocabulary_)))
     run_accuracy = []
-
     # Training
     # ==================================================
-
     with tf.Graph().as_default():
         session_conf = tf.ConfigProto(
           allow_soft_placement=FLAGS.allow_soft_placement,

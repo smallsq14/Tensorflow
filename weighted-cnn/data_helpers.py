@@ -27,7 +27,7 @@ def clean_str(string):
     return string.strip().lower()
 
 
-def load_data_and_labels(aImbalance,aPolarity):
+def load_data_and_labels():
     """
     Loads MR polarity data from files, splits the data into words and generates labels.
     Returns split sentences and labels.
@@ -35,20 +35,10 @@ def load_data_and_labels(aImbalance,aPolarity):
     # Load data from files
     positive_examples = list(open("./data/rt-polaritydata/rt-polarity.pos", "r").readlines())
     positive_examples = [s.strip() for s in positive_examples]
-    list_pos_length  = len(positive_examples)
-    print("length of positive:%s",list_pos_length)
-    if aPolarity == "positive":
-    	del positive_examples[aImbalance:]
-	print("lenght of positive imbalanced:%s",len(positive_examples))
     negative_examples = list(open("./data/rt-polaritydata/rt-polarity.neg", "r").readlines())
     negative_examples = [s.strip() for s in negative_examples]
-    print("length of negative:%s",len(negative_examples))
-    if aPolarity == "negative":
-	del negative_examples[aImbalance:]
-	print("lenght of negative imbalanced:%s",len(negative_examples))
     x_text = positive_examples + negative_examples
-    #for x in range(0,len(x_text)):
-    #    print("Original x-text:%s",x_text)
+
     x_text = [clean_str(sent) for sent in x_text]
     
     # Generate labels
