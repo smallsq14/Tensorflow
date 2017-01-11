@@ -71,18 +71,14 @@ y_shuffled = y[shuffle_indices]
 # Split train/test set
 x_train, x_dev = x_shuffled[:-1000], x_shuffled[-1000:]
 y_train, y_dev = y_shuffled[:-1000], y_shuffled[-1000:]
-
+print("X Train {}".format(len(x_train)))
+print("Y Train {}".format(len(x_train)))
+print("X Dev {}".format(len(x_dev)))
+print("Y Dev {}".format(len(y_dev)))
 
 np_dev_x = x_dev
 np_dev_y = y_dev
 
-print("Writing out x dev")
-print(np_dev_x)
-#np.save('dev_x.txt',x_dev)
-print("Writing out y dev")
-print(np_dev_y)
-#np.save('dev_y.txt',y_dev)
-list_minority_negative = []
 classifier_list = []
 
 pos_value = np.array([0, 1])
