@@ -51,7 +51,7 @@ print("")
 
 # Load data
 random_seed = 10
-number_of_classifiers = 2
+number_of_classifiers = 10
 
 x_text, y = data_helpers.load_data_and_labels()
 
@@ -71,10 +71,6 @@ y_shuffled = y[shuffle_indices]
 # Split train/test set
 x_train, x_dev = x_shuffled[:-1000], x_shuffled[-1000:]
 y_train, y_dev = y_shuffled[:-1000], y_shuffled[-1000:]
-print("X Train {}".format(len(x_train)))
-print("Y Train {}".format(len(x_train)))
-print("X Dev {}".format(len(x_dev)))
-print("Y Dev {}".format(len(y_dev)))
 
 np_dev_x = x_dev
 np_dev_y = y_dev
@@ -105,7 +101,6 @@ for p in range(0,number_of_classifiers):
     list_positive_balanced = []
     list_negative_balanced = []
 
-    print("The count of negative labels in test unchanging: %s", len(list_negative_instances_unchanging))
     print("Undersampling the positive instances")
     for x in range(0,len(list_negative_instances)):
         list_positive_balanced.append(list_positive_instances[random.randint(0,len(list_positive_instances)-1)])
@@ -305,22 +300,16 @@ with graph.as_default():
 if y_test is not None:
     print("***************************************")
     print("***********Results*********************")
-    print("All Predictions:\n")
-    print (all_predictions)
-    print (y_test)
-    print("--End All Predictions\m")
     print("Length of All Predictions {}".format(len(all_predictions)))
     print("Length of y test {}".format(len(y_test)))
     correct_predictions = float(np.sum(all_predictions == y_test))
     print("Total number of test examples: {}".format(len(y_test)))
     print("All predictions%S",len(all_predictions))
-    print("y test: {}".format(len(y_test)))
-    print("x_test: {}".format(len(x_test)))
     print("Incorrect Predictions %s", len(y_test) - correct_predictions)
     print("Correct Predictions %s", len(y_test) - float(np.sum(all_predictions != y_test)))
     print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
-    print("Precision, Recall, Fscore")
     print(confusion_matrix(y_test, all_predictions))
+    print("Precision, Recall, Fscore")
     print(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
 #     outfile.write("\nTotal number of test examples: {}".format(len(y_test)))
 #     outfile.write("\nAll predictions {}".format(len(all_predictions)))
