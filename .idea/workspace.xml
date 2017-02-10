@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="603db973-df2f-47a6-990d-9dd0bce15a0a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/majority-voting/train_eval.py" afterPath="$PROJECT_DIR$/majority-voting/train_eval.py" />
     </list>
     <ignored path="Tensorflow.iws" />
@@ -42,8 +41,8 @@
       <file leaf-file-name="train_eval.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/majority-voting/train_eval.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="171" column="0" selection-start-line="171" selection-start-column="0" selection-end-line="171" selection-end-column="0" />
+            <state relative-caret-position="323">
+              <caret line="54" column="0" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -608,8 +607,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/majority-voting/train_eval.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="171" column="0" selection-start-line="171" selection-start-column="0" selection-end-line="171" selection-end-column="0" />
+        <state relative-caret-position="323">
+          <caret line="54" column="0" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
           <folding />
         </state>
       </provider>
