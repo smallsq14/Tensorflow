@@ -325,26 +325,34 @@ if y_test is not None:
     print("***************************************")
     print("***********Results Sum of 10*********************")
     print("length of the list {}".format(len(all_model_predictions)))
-    all_predictions = np.array()
+
     pos_value = np.array([0, 1])
     neg_value = np.array([1, 0])
 
-
-    for w in range (0,999):
+    pos_value = np.array([0, 1])
+    neg_value = np.array([1, 0])
+    all_predictions = []
+    for w in range(0, 1000):
         sumOne = 0
         sumZero = 0
-        for t in range(0,number_of_classifiers):
-            print("classifier {} prediction: {}".format(t,all_model_predictions[t][w]))
-            if (all_model_predictions[t][w] == pos_value).all():
-                print("Positive Label")
+        for t in range(0, number_of_classifiers):
+            # print("classifier {} prediction: {}".format(t, testList[t][w]))
+            if (all_model_predictions[t][w] == 1.0).all():
+                # print("Positive Label")
                 sumOne = sumOne + 1
             else:
-                print("Negative label")
+                # print("Negative label")
                 sumZero = sumZero + 1
-        if(sumOne > sumZero):
-            all_predictions.append(pos_value)
+        if (sumOne > sumZero):
+            all_predictions.append(1.0)
         else:
-            all_predictions.append(neg_value)
+            all_predictions.append(0.0)
+        if (sumOne == 2):
+            print("condition voted")
+        if (sumZero == 2):
+            print("condition voted")
+        # testagain = np.argmax(np.array(all_predictions).astype(float), axis=1)
+        all_predictions = np.array(all_predictions)
 
 
 
