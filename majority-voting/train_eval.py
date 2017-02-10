@@ -302,6 +302,7 @@ for p in range(0,number_of_classifiers):
         print("***********Results*********************")
         print("All Predictions:\n")
         print (all_predictions)
+        np.save('all_predictions_'+p+'.txt', all_predictions)
         all_model_predictions.append(all_predictions)
         print("length of the list {}".format(len(all_model_predictions)))
         print (y_test)
