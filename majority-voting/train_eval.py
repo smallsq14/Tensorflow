@@ -51,7 +51,7 @@ all_model_predictions = list()
 
 # Load data
 random_seed = 10
-number_of_classifiers = 3
+number_of_classifiers = 10
 
 x_text, y = data_helpers.load_data_and_labels()
 
