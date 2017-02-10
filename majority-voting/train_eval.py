@@ -45,13 +45,13 @@ for attr, value in sorted(FLAGS.__flags.items()):
     print("{}={}".format(attr.upper(), value))
 print("")
 
-
+all_model_predictions = list()
 # Data Preparation
 # ==================================================
 
 # Load data
 random_seed = 10
-number_of_classifiers = 2
+number_of_classifiers = 3
 
 x_text, y = data_helpers.load_data_and_labels()
 
@@ -255,60 +255,98 @@ for p in range(0,number_of_classifiers):
 
 
 #Print Classifier List and Sort
-for t in classifier_list:
-    print("\n {}  {} iteration {}".format(t.checkpoint, t.accuracy, t.iteration))
-classifier_list.sort(key=lambda x: x.accuracy, reverse=True)
-print("\nSelected Classifier {} has accuracy {}".format(classifier_list[0].checkpoint, classifier_list[0].accuracy))
+    y_test = np_dev_y
+    x_test = np_dev_x
+    #
+    # Map data into vocabulary
+    vocab_path = os.path.join(classifier_list[0].checkpoint, "..", "vocab")
+    vocab_processor = learn.preprocessing.VocabularyProcessor.restore(vocab_path)
+    y_test = np.argmax(y_test, axis=1)
+    #
+    print("\nEvaluating...\n")
+    #
+    # # Evaluation
+    # # ==================================================
+    checkpoint_file = tf.train.latest_checkpoint(classifier_list[0].checkpoint)
+    graph = tf.Graph()
+    with graph.as_default():
+        session_conf = tf.ConfigProto(
+          allow_soft_placement=FLAGS.allow_soft_placement,
+          log_device_placement=FLAGS.log_device_placement)
+        sess = tf.Session(config=session_conf)
+        with sess.as_default():
+            # Load the saved meta graph and restore variables
+            saver = tf.train.import_meta_graph("{}.meta".format(checkpoint_file))
+            saver.restore(sess, checkpoint_file)
+    #
+    #         # Get the placeholders from the graph by name
+            input_x = graph.get_operation_by_name("input_x").outputs[0]
+            # input_y = graph.get_operation_by_name("input_y").outputs[0]
+            dropout_keep_prob = graph.get_operation_by_name("dropout_keep_prob").outputs[0]
+    #
+    #         # Tensors we want to evaluate
+            predictions = graph.get_operation_by_name("output/predictions").outputs[0]
+    #
+    #         # Generate batches for one epoch
+            batches = data_helpers.batch_iter(list(x_test), FLAGS.batch_size, 1, shuffle=False)
+    #
+    #         # Collect the predictions here
+            all_predictions = []
+    #     #print ("Number of batches: %s",len(batches))
+            for x_test_batch in batches:
+                batch_predictions = sess.run(predictions, {input_x: x_test_batch, dropout_keep_prob: 1.0})
+                all_predictions = np.concatenate([all_predictions, batch_predictions])
 
-y_test = np_dev_y
-x_test = np_dev_x
-#
-# Map data into vocabulary
-vocab_path = os.path.join(classifier_list[0].checkpoint, "..", "vocab")
-vocab_processor = learn.preprocessing.VocabularyProcessor.restore(vocab_path)
-y_test = np.argmax(y_test, axis=1)
-#
-print("\nEvaluating...\n")
-#
-# # Evaluation
-# # ==================================================
-checkpoint_file = tf.train.latest_checkpoint(classifier_list[0].checkpoint)
-graph = tf.Graph()
-with graph.as_default():
-    session_conf = tf.ConfigProto(
-      allow_soft_placement=FLAGS.allow_soft_placement,
-      log_device_placement=FLAGS.log_device_placement)
-    sess = tf.Session(config=session_conf)
-    with sess.as_default():
-        # Load the saved meta graph and restore variables
-        saver = tf.train.import_meta_graph("{}.meta".format(checkpoint_file))
-        saver.restore(sess, checkpoint_file)
-#
-#         # Get the placeholders from the graph by name
-        input_x = graph.get_operation_by_name("input_x").outputs[0]
-        # input_y = graph.get_operation_by_name("input_y").outputs[0]
-        dropout_keep_prob = graph.get_operation_by_name("dropout_keep_prob").outputs[0]
-#
-#         # Tensors we want to evaluate
-        predictions = graph.get_operation_by_name("output/predictions").outputs[0]
-#
-#         # Generate batches for one epoch
-        batches = data_helpers.batch_iter(list(x_test), FLAGS.batch_size, 1, shuffle=False)
-#
-#         # Collect the predictions here
-        all_predictions = []
-#     #print ("Number of batches: %s",len(batches))
-        for x_test_batch in batches:
-            batch_predictions = sess.run(predictions, {input_x: x_test_batch, dropout_keep_prob: 1.0})
-            all_predictions = np.concatenate([all_predictions, batch_predictions])
+    if y_test is not None:
+        print("***************************************")
+        print("***********Results*********************")
+        print("All Predictions:\n")
+        print (all_predictions)
+        all_model_predictions.append(all_predictions)
+        print("length of the list {}".format(len(all_model_predictions)))
+        print (y_test)
+        print("--End All Predictions\m")
+        print("Length of All Predictions {}".format(len(all_predictions)))
+        print("Length of y test {}".format(len(y_test)))
+        correct_predictions = float(np.sum(all_predictions == y_test))
+        print("Total number of test examples: {}".format(len(y_test)))
+        print("All predictions%S",len(all_predictions))
+        print("y test: {}".format(len(y_test)))
+        print("x_test: {}".format(len(x_test)))
+        print("Incorrect Predictions %s", len(y_test) - correct_predictions)
+        print("Correct Predictions %s", len(y_test) - float(np.sum(all_predictions != y_test)))
+        print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
+        print("Precision, Recall, Fscore")
+        print(confusion_matrix(y_test, all_predictions))
+        print(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
 
 if y_test is not None:
     print("***************************************")
-    print("***********Results*********************")
-    print("All Predictions:\n")
-    print (all_predictions)
-    print (y_test)
-    print("--End All Predictions\m")
+    print("***********Results Sum of 10*********************")
+    print("length of the list {}".format(len(all_model_predictions)))
+    all_predictions = np.array()
+    pos_value = np.array([0, 1])
+    neg_value = np.array([1, 0])
+
+
+    for w in range (0,999):
+        sumOne = 0
+        sumZero = 0
+        for t in range(0,number_of_classifiers):
+            print("classifier {} prediction: {}".format(t,all_model_predictions[t][w]))
+            if (all_model_predictions[t][w] == pos_value).all():
+                print("Positive Label")
+                sumOne = sumOne + 1
+            else:
+                print("Negative label")
+                sumZero = sumZero + 1
+        if(sumOne > sumZero):
+            all_predictions.append(pos_value)
+        else:
+            all_predictions.append(neg_value)
+
+
+
     print("Length of All Predictions {}".format(len(all_predictions)))
     print("Length of y test {}".format(len(y_test)))
     correct_predictions = float(np.sum(all_predictions == y_test))
