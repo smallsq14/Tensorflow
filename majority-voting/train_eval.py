@@ -97,7 +97,7 @@ for x in range(0, len(x_train)):
         # print("Negative label")
         list_negative_instances.append(x_train[x])
 #final value
-list_negative_instances_unchanging = list_negative_instances[:1000]
+list_negative_instances_unchanging = list_negative_instances[:1500]
 
 for p in range(0,number_of_classifiers):
     rand_seed = randint(0, 9)
