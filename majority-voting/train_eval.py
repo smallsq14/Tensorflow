@@ -51,7 +51,7 @@ all_model_predictions = list()
 
 # Load data
 random_seed = 10
-number_of_classifiers = 5
+number_of_classifiers = 10
 
 
 x_text, y = data_helpers.load_data_and_labels()
@@ -381,9 +381,9 @@ if y_test is not None:
     outfile.write("\nAccuracy: {:g}".format(correct_predictions / float(len(y_test))))
 
     for t in range(0,len(classifier_list)):
-        outfile.write("Classifier {} accuracy {}".format(classifier_list[t].iteration,classifier_list[t].accuracy))
+        outfile.write("\nClassifier {} accuracy {}".format(classifier_list[t].iteration,classifier_list[t].accuracy))
     outfile.write("\nPrecision, Recall, Fscore")
 #     #outfile.write(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
-#     outfile.write(np.array2string(confusion_matrix(y_test, all_predictions),separator=','))
+    outfile.write(np.array2string(confusion_matrix(y_test, all_predictions),separator=','))
 #     #outfile.write(confusion_matrix(y_test, all_predictions))
     outfile.close()
