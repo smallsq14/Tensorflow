@@ -98,6 +98,7 @@ for x in range(0, len(x_train)):
         list_negative_instances.append(x_train[x])
 #final value
 list_negative_instances_unchanging = list_negative_instances[:1500]
+text_for_file ="1500_negative"
 
 for p in range(0,number_of_classifiers):
     rand_seed = randint(0, 9)
@@ -371,7 +372,7 @@ if y_test is not None:
     print("Precision, Recall, Fscore")
     print(confusion_matrix(y_test, all_predictions))
     print(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
-    outfile = open('rus_10classifier.txt','w')
+    outfile = open('rus_10classifier'+str(text_for_file)+'.txt','w')
     outfile.write("\nTotal number of test examples: {}".format(len(y_test)))
     outfile.write("\nAll predictions {}".format(len(all_predictions)))
     outfile.write("\ny test: {}".format(len(y_test)))
