@@ -105,7 +105,7 @@ for p in range(0,number_of_classifiers):
     list_negative_instances_temp = []
     list_positive_balanced = []
     list_negative_balanced = []
-
+    checkpoint_dir_for_eval = ""
     print("The count of negative labels in test unchanging: %s", len(list_negative_instances_unchanging))
     print("Undersampling the positive instances")
     for x in range(0,len(list_negative_instances)):
@@ -187,6 +187,7 @@ for p in range(0,number_of_classifiers):
 
             # Checkpoint directory. Tensorflow assumes this directory already exists so we need to create it
             checkpoint_dir = os.path.abspath(os.path.join(out_dir, "checkpoints"))
+            checkpoint_dir_for_eval = checkpoint_dir
             checkpoint_prefix = os.path.join(checkpoint_dir, "model")
             if not os.path.exists(checkpoint_dir):
                 os.makedirs(checkpoint_dir)
@@ -245,14 +246,14 @@ for p in range(0,number_of_classifiers):
                 train_step(x_batch, y_batch)
                 current_step = tf.train.global_step(sess, global_step)
                 if current_step % FLAGS.evaluate_every == 0:
-                    print("\nEvaluation:")
+                    #print("\nEvaluation:")
                     dev_step(x_dev, y_dev, writer=dev_summary_writer)
 
                 if current_step % FLAGS.checkpoint_every == 0:
                     path = saver.save(sess, checkpoint_prefix, global_step=current_step)
-                    print("Saved model checkpoint to {}\n".format(path))
+                    #print("Saved model checkpoint to {}\n".format(path))
             classifier_list.append(Classifier(checkpoint=checkpoint_dir,accuracy=run_accuracy[len(run_accuracy)-1],iteration=p))
-            print("The Final Accuracy is {}".format(run_accuracy))
+            #print("The Final Accuracy is {}".format(run_accuracy))
 
 
 #Print Classifier List and Sort
@@ -260,7 +261,7 @@ for p in range(0,number_of_classifiers):
     x_test = np_dev_x
     #
     # Map data into vocabulary
-    vocab_path = os.path.join(classifier_list[0].checkpoint, "..", "vocab")
+    vocab_path = os.path.join(checkpoint_dir_for_eval, "..", "vocab")
     vocab_processor = learn.preprocessing.VocabularyProcessor.restore(vocab_path)
     y_test = np.argmax(y_test, axis=1)
     #
@@ -268,7 +269,8 @@ for p in range(0,number_of_classifiers):
     #
     # # Evaluation
     # # ==================================================
-    checkpoint_file = tf.train.latest_checkpoint(classifier_list[0].checkpoint)
+    all_predictions = []
+    checkpoint_file = tf.train.latest_checkpoint(checkpoint_dir_for_eval)
     graph = tf.Graph()
     with graph.as_default():
         session_conf = tf.ConfigProto(
@@ -292,7 +294,8 @@ for p in range(0,number_of_classifiers):
             batches = data_helpers.batch_iter(list(x_test), FLAGS.batch_size, 1, shuffle=False)
     #
     #         # Collect the predictions here
-            all_predictions = []
+            #check this later
+            #all_predictions = []
     #     #print ("Number of batches: %s",len(batches))
             for x_test_batch in batches:
                 batch_predictions = sess.run(predictions, {input_x: x_test_batch, dropout_keep_prob: 1.0})
