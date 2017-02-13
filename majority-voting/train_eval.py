@@ -343,9 +343,9 @@ if y_test is not None:
                 # print("Negative label")
                 sumZero = sumZero + 1
         if (sumOne > sumZero):
-            numpy.append(all_predictions.append,1.0)
+            np.append(all_predictions.append,1.0)
         else:
-            numpy.append(all_predictions.append,0.0)
+            np.append(all_predictions.append,0.0)
         if (sumOne == 2):
             print("condition voted")
         if (sumZero == 2):
