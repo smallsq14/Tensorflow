@@ -51,7 +51,7 @@ all_model_predictions = list()
 
 # Load data
 random_seed = 10
-number_of_classifiers = 3
+number_of_classifiers = 1
 
 
 x_text, y = data_helpers.load_data_and_labels()
@@ -343,9 +343,9 @@ if y_test is not None:
                 # print("Negative label")
                 sumZero = sumZero + 1
         if (sumOne > sumZero):
-            np.append(all_predictions,1.0)
+            all_predictions.append(1.0)
         else:
-            np.append(all_predictions,0.0)
+            all_predictions.append(0.0)
         if (sumOne == 2):
             print("condition voted")
         if (sumZero == 2):
