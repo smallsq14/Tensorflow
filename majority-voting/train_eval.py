@@ -330,8 +330,6 @@ if y_test is not None:
     pos_value = np.array([0, 1])
     neg_value = np.array([1, 0])
 
-    pos_value = np.array([0, 1])
-    neg_value = np.array([1, 0])
     all_predictions = []
     for w in range(0, 1000):
         sumOne = 0
@@ -345,9 +343,9 @@ if y_test is not None:
                 # print("Negative label")
                 sumZero = sumZero + 1
         if (sumOne > sumZero):
-            all_predictions.append(1.0)
+            numpy.append(all_predictions.append,1.0)
         else:
-            all_predictions.append(0.0)
+            numpy.append(all_predictions.append,0.0)
         if (sumOne == 2):
             print("condition voted")
         if (sumZero == 2):
