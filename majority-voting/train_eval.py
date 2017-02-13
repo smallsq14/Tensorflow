@@ -51,7 +51,7 @@ all_model_predictions = list()
 
 # Load data
 random_seed = 10
-number_of_classifiers = 1
+number_of_classifiers = 3
 
 
 x_text, y = data_helpers.load_data_and_labels()
@@ -351,7 +351,7 @@ if y_test is not None:
         if (sumZero == 2):
             print("condition voted")
         # testagain = np.argmax(np.array(all_predictions).astype(float), axis=1)
-        all_predictions = np.array(all_predictions)
+    all_predictions = np.array(all_predictions)
 
 
 
