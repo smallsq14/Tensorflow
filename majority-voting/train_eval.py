@@ -51,7 +51,7 @@ all_model_predictions = list()
 
 # Load data
 random_seed = 10
-number_of_classifiers = 3
+number_of_classifiers = 5
 
 
 x_text, y = data_helpers.load_data_and_labels()
@@ -213,7 +213,7 @@ for p in range(0,number_of_classifiers):
                     [train_op, global_step, train_summary_op, cnn.loss, cnn.accuracy],
                     feed_dict)
                 time_str = datetime.datetime.now().isoformat()
-                print("TRAIN {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+                #print("TRAIN {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
                 train_summary_writer.add_summary(summaries, step)
 
             def dev_step(x_batch, y_batch, writer=None):
@@ -230,9 +230,9 @@ for p in range(0,number_of_classifiers):
                     feed_dict)
                 time_str = datetime.datetime.now().isoformat()
                 run_accuracy.append(accuracy)
-                print("Run Accuracy List:")
+                #print("Run Accuracy List:")
                 print(run_accuracy)
-                print("DEV {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+                #print("DEV {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
             #if writer:
             #        writer.add_summary(summaries, step)
 
@@ -300,7 +300,7 @@ for p in range(0,number_of_classifiers):
 
     if y_test is not None:
         print("***************************************")
-        print("***********Results*********************")
+        print("***********Results**" + str(p) +  " *******************")
         print("All Predictions:\n")
         print (all_predictions)
         np.save('all_predictions_'+str(p)+'.txt', all_predictions)
