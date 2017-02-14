@@ -111,7 +111,7 @@ for p in range(0,number_of_classifiers):
     checkpoint_dir_for_eval = ""
     print("The count of negative labels in test unchanging: %s", len(list_positive_instances_unchanging))
     print("Undersampling the negative instances")
-    for x in range(0,len(list_negative_instances)):
+    for x in range(0,len(list_positive_instances_unchanging )):
         list_negative_balanced.append(list_negative_instances[random.randint(0,len(list_negative_instances)-1)])
     print("Positive size now: {}".format(len(list_positive_balanced)))
     print("Negative size now: {}".format(len(list_negative_balanced)))
