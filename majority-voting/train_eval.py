@@ -97,8 +97,9 @@ for x in range(0, len(x_train)):
         # print("Negative label")
         list_negative_instances.append(x_train[x])
 #final value
-list_negative_instances_unchanging = list_negative_instances[:1500]
-text_for_file ="1500_negative"
+#list_negative_instances_unchanging = list_negative_instances[:1500]
+list_positive_instances_unchanging = list_negative_instances[:500]
+text_for_file ="500_positive"
 
 for p in range(0,number_of_classifiers):
     rand_seed = randint(0, 9)
@@ -107,13 +108,14 @@ for p in range(0,number_of_classifiers):
     list_positive_balanced = []
     list_negative_balanced = []
     checkpoint_dir_for_eval = ""
-    print("The count of negative labels in test unchanging: %s", len(list_negative_instances_unchanging))
-    print("Undersampling the positive instances")
+    print("The count of negative labels in test unchanging: %s", len(list_positive_instances_unchanging))
+    print("Undersampling the negative instances")
     for x in range(0,len(list_negative_instances)):
-        list_positive_balanced.append(list_positive_instances[random.randint(0,len(list_positive_instances)-1)])
+        list_negative_balanced.append(list_positive_instances[random.randint(0,len(list_positive_instances)-1)])
     print("Positive size now: {}".format(len(list_positive_balanced)))
-    list_negative_instances = list_negative_instances_unchanging
-    list_positive_instances = list_positive_balanced
+    print("Negative size now: {}".format(len(list_negative_balanced)))
+    list_negative_instances = list_negative_balanced
+    list_positive_instances = list_positive_instances_unchanging
     print("The count of positive labels in test after undersampling: %s",len(list_negative_instances))
     print("The count of negative labels in test after undersampling: %s",len(list_positive_instances))
     #Regenerate the labels
