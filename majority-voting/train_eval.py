@@ -99,7 +99,7 @@ for x in range(0, len(x_train)):
         list_negative_instances.append(x_train[x])
 #final value
 #list_negative_instances_unchanging = list_negative_instances[:1500]
-list_positive_instances_unchanging = list_positive_instances[:1000]
+list_positive_instances_unchanging = list_positive_instances[:1500]
 text_for_file ="500_positive"
 
 for p in range(0,number_of_classifiers):
