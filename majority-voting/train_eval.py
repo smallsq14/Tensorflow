@@ -61,21 +61,36 @@ max_document_length = max([len(x.split(" ")) for x in x_text])
 vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
 x = np.array(list(vocab_processor.fit_transform(x_text)))
 
-# Randomly shuffle data
-np.random.seed(random_seed)
-shuffle_indices = np.random.permutation(np.arange(len(y)))
+#check is saved file exists
+if (os.path.isfile('save_x_train.npy')  and os.path.isfile('save_y_train.npy')  and os.path.isfile('save_x_dev.npy')  and os.path.isfile('save_y_dev.npy')):
+    print('all files exists loading saved datasets\n')
+    x_train = np.load('save_x_train')
+    y_train = np.load('save_y_train')
+    x_dev = np.load('save_x_dev')
+    y_dev = np.load('save_y_dev')
+else:
 
-#x_raw_shuffled = x_text[shuffle_indices]
-x_shuffled = x[shuffle_indices]
-y_shuffled = y[shuffle_indices]
 
-# Split train/test set
-x_train, x_dev = x_shuffled[:-1000], x_shuffled[-1000:]
-y_train, y_dev = y_shuffled[:-1000], y_shuffled[-1000:]
-print("X Train {}".format(len(x_train)))
-print("Y Train {}".format(len(x_train)))
-print("X Dev {}".format(len(x_dev)))
-print("Y Dev {}".format(len(y_dev)))
+    # Randomly shuffle data
+    np.random.seed(random_seed)
+    shuffle_indices = np.random.permutation(np.arange(len(y)))
+
+    # x_raw_shuffled = x_text[shuffle_indices]
+    x_shuffled = x[shuffle_indices]
+    y_shuffled = y[shuffle_indices]
+    # Split train/test set
+    x_train, x_dev = x_shuffled[:-1000], x_shuffled[-1000:]
+    y_train, y_dev = y_shuffled[:-1000], y_shuffled[-1000:]
+    np.save('save_x_train', x_train)
+    np.save('save_y_train', y_train)
+    np.save('save_x_dev', x_dev)
+    np.save('save_y_dev', y_dev)
+    outx_dev = open('1.txt')
+    outx_dev.write(str(x_dev))
+    outx_dev.close()
+print("X Y Train {}".format(len(x_train)))
+print("X Y Dev {}".format(len(x_dev)))
+
 
 np_dev_x = x_dev
 np_dev_y = y_dev
@@ -97,9 +112,9 @@ for x in range(0, len(x_train)):
     else:
         # print("Negative label")
         list_negative_instances.append(x_train[x])
-#final value
+
 #list_negative_instances_unchanging = list_negative_instances[:1500]
-list_positive_instances_unchanging = list_positive_instances[:2000]
+list_positive_instances_unchanging = list_positive_instances[:500]
 text_for_file ="500_positive"
 
 for p in range(0,number_of_classifiers):
