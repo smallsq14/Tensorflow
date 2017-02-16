@@ -64,17 +64,14 @@ x = np.array(list(vocab_processor.fit_transform(x_text)))
 #check is saved file exists
 if (os.path.isfile('save_x_train.npy')  and os.path.isfile('save_y_train.npy')  and os.path.isfile('save_x_dev.npy')  and os.path.isfile('save_y_dev.npy')):
     print('all files exists loading saved datasets\n')
-    x_train = np.load('save_x_train')
-    y_train = np.load('save_y_train')
-    x_dev = np.load('save_x_dev')
-    y_dev = np.load('save_y_dev')
+    x_train = np.load('save_x_train.npy')
+    y_train = np.load('save_y_train.npy')
+    x_dev = np.load('save_x_dev.npy')
+    y_dev = np.load('save_y_dev.npy')
 else:
-
-
     # Randomly shuffle data
     np.random.seed(random_seed)
     shuffle_indices = np.random.permutation(np.arange(len(y)))
-
     # x_raw_shuffled = x_text[shuffle_indices]
     x_shuffled = x[shuffle_indices]
     y_shuffled = y[shuffle_indices]
