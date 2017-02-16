@@ -116,6 +116,7 @@ for o in range(0,5):
 
         if(t==0):
             #no change
+            rand_seed = int(t)
             print("running Method A")
             positive_labels = [[0, 1] for _ in list_positive_instances]
             negative_labels = [[1, 0] for _ in list_negative_instances]
@@ -131,6 +132,7 @@ for o in range(0,5):
             print("The count of negative labels in test after nothing: %s", len(list_positive_instances))
         if(t==1):
             #undersample
+            rand_seed = int(t)
             print("running Method B")
             list_positive_instances_temp = []
             list_negative_instances_temp = []
@@ -167,6 +169,7 @@ for o in range(0,5):
             run_accuracy = []
 
         if(t==2):
+            rand_seed = int(t)
             print("running Method C")
             list_positive_instances_temp = []
             list_negative_instances_temp = []
