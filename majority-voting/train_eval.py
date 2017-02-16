@@ -94,8 +94,12 @@ for o in range(0,5):
     positive_train_size = imbalance_size - positive_test_size
     negative_test_size = .20 * len(list_negative_instances)
     negative_train_size = len(list_negative_instances) - negative_test_size
-    neg_cut_dev = list_negative_instances[-negative_test_size:]
-    pos_cut_dev = list_positive_instances[-positive_test_size:]
+    print("Positive Test Size{}".format(positive_test_size))
+    print("Negative Test Size{}".format(negative_test_size))
+    print("Positive Train Size{}".format(positive_train_size))
+    print("Negative Train Size{}".format(negative_train_size))
+    neg_cut_dev = list_negative_instances[-int(negative_test_size):]
+    pos_cut_dev = list_positive_instances[-int(positive_test_size):]
     positive_labels = [[0, 1] for _ in pos_cut_dev]
     negative_labels = [[1, 0] for _ in neg_cut_dev]
     print("Length of Cut positive test:%s", len(pos_cut_dev))
@@ -106,8 +110,8 @@ for o in range(0,5):
     x_dev = np.array(neg_cut_dev + pos_cut_dev)
     np_dev_x = x_dev
     np_dev_y = y_dev
-    list_positive_instances = list_positive_instances[:-positive_test_size]
-    list_negative_instances = list_negative_instances[:-negative_test_size]
+    list_positive_instances = list_positive_instances[:-int(positive_test_size)]
+    list_negative_instances = list_negative_instances[:-int(negative_test_size)]
     for t in range(0,3):
 
         if(t==0):
