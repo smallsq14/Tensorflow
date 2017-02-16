@@ -90,10 +90,10 @@ for o in range(0,5):
 
     text_for_file ="4331_positive"
     imbalance_size = 500
-    positive_test_size = .20 * imbalance_size
-    positive_train_size = imbalance_size - positive_test_size
-    negative_test_size = .20 * len(list_negative_instances)
-    negative_train_size = len(list_negative_instances) - negative_test_size
+    positive_test_size = round(.20 * imbalance_size)
+    positive_train_size = round(imbalance_size - positive_test_size)
+    negative_test_size = round(.20 * len(list_negative_instances))
+    negative_train_size = round(len(list_negative_instances) - negative_test_size)
     print("Positive Test Size{}".format(positive_test_size))
     print("Negative Test Size{}".format(negative_test_size))
     print("Positive Train Size{}".format(positive_train_size))
@@ -110,8 +110,8 @@ for o in range(0,5):
     x_dev = np.array(neg_cut_dev + pos_cut_dev)
     np_dev_x = x_dev
     np_dev_y = y_dev
-    list_positive_instances = list_positive_instances[:-int(positive_test_size)]
-    list_negative_instances = list_negative_instances[:-int(negative_test_size)]
+    list_positive_instances = list_positive_instances[:int(positive_train_size)]
+    list_negative_instances = list_negative_instances[:int(negative_train_size)]
     for t in range(0,3):
 
         if(t==0):
@@ -128,8 +128,8 @@ for o in range(0,5):
             shuffle_indices = np.random.permutation(np.arange(len(y_t)))
             x_train = x_t[shuffle_indices]
             y_train = y_t[shuffle_indices]
-            print("The count of positive labels in test after nothing: %s", len(list_negative_instances))
-            print("The count of negative labels in test after nothing: %s", len(list_positive_instances))
+            print("The count of positive labels in test after nothing: %s", len(list_positive_instances))
+            print("The count of negative labels in test after nothing: %s", len(list_negative_instances))
         if(t==1):
             #undersample
             rand_seed = int(t)
