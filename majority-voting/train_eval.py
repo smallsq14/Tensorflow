@@ -113,6 +113,7 @@ for o in range(0,5):
     list_positive_instances = list_positive_instances[:int(positive_train_size)]
     list_negative_instances = list_negative_instances[:int(negative_train_size)]
     for t in range(0,3):
+        run_accuracy = []
 
         if(t==0):
             #no change
@@ -130,6 +131,7 @@ for o in range(0,5):
             y_train = y_t[shuffle_indices]
             print("The count of positive labels in test after nothing: %s", len(list_positive_instances))
             print("The count of negative labels in test after nothing: %s", len(list_negative_instances))
+
         if(t==1):
             #undersample
             rand_seed = int(t)
@@ -166,7 +168,7 @@ for o in range(0,5):
 
             print("Overall Length:%s", len(y_train))
             print("Vocabulary Size: {:d}".format(len(vocab_processor.vocabulary_)))
-            run_accuracy = []
+
 
         if(t==2):
             rand_seed = int(t)
@@ -200,8 +202,7 @@ for o in range(0,5):
 
             print("Overall Length:%s", len(y_train))
             print("Vocabulary Size: {:d}".format(len(vocab_processor.vocabulary_)))
-            run_accuracy = []
-            #oversample
+
 
 
 
