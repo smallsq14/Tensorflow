@@ -85,7 +85,7 @@ else:
     np.save('save_y_train', y_train)
     np.save('save_x_dev', x_dev)
     np.save('save_y_dev', y_dev)
-    outx_dev = open('1.txt')
+    outx_dev = open('1.txt','w')
     outx_dev.write(str(x_dev))
     outx_dev.close()
 print("X Y Train {}".format(len(x_train)))
