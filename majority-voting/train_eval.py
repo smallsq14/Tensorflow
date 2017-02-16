@@ -82,10 +82,10 @@ for o in range(0,5):
     for x in range(0, len(x_shuffled)):
         if (y_shuffled[x] == pos_value).all():
             # print("Positive Label")
-            list_positive_instances.append(x_train[x])
+            list_positive_instances.append(x_shuffled[x])
         else:
             # print("Negative label")
-            list_negative_instances.append(x_train[x])
+            list_negative_instances.append(x_shuffled[x])
     #final value
 
     text_for_file ="4331_positive"
@@ -98,6 +98,8 @@ for o in range(0,5):
     pos_cut_dev = list_positive_instances[-positive_test_size:]
     positive_labels = [[0, 1] for _ in pos_cut_dev]
     negative_labels = [[1, 0] for _ in neg_cut_dev]
+    print("Length of Cut positive test:%s", len(pos_cut_dev))
+    print("Length of Cut negative test:%s", len(neg_cut_dev))
     print("Length of Cut positive labels:%s", len(positive_labels))
     print("Length of Cut negative labels:%s", len(negative_labels))
     y_dev = np.concatenate([positive_labels, negative_labels], 0)
