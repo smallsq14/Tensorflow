@@ -121,6 +121,8 @@ for o in range(0,5):
             shuffle_indices = np.random.permutation(np.arange(len(y_t)))
             x_train = x_t[shuffle_indices]
             y_train = y_t[shuffle_indices]
+            print("The count of positive labels in test after nothing: %s", len(list_negative_instances))
+            print("The count of negative labels in test after nothing: %s", len(list_positive_instances))
         if(t==1):
             #undersample
             print("running Method B")
@@ -170,8 +172,8 @@ for o in range(0,5):
             print("Positive size now: %s", len(list_positive_balanced))
             outfile.write("Positive size now: {}".format(len(list_positive_balanced)))
             list_positive_instances = list_positive_balanced
-            print("The count of positive labels in test after undersampling: %s", len(list_negative_instances))
-            print("The count of negative labels in test after undersampling: %s", len(list_positive_instances))
+            print("The count of positive labels in test after oversampling: %s", len(list_negative_instances))
+            print("The count of negative labels in test after oversampling: %s", len(list_positive_instances))
             # Regenerate the labels
             positive_labels = [[0, 1] for _ in list_positive_instances]
             negative_labels = [[1, 0] for _ in list_negative_instances]
