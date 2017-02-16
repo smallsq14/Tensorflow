@@ -52,7 +52,7 @@ all_model_predictions = list()
 # Load data
 random_seed = 10
 number_of_classifiers = 10
-
+run_accuracy = []
 for o in range(0,5):
 
     x_text, y = data_helpers.load_data_and_labels()
