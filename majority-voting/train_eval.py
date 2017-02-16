@@ -129,8 +129,8 @@ for o in range(0,5):
             shuffle_indices = np.random.permutation(np.arange(len(y_t)))
             x_train = x_t[shuffle_indices]
             y_train = y_t[shuffle_indices]
-            print("The count of positive labels in test after nothing: %s", len(list_positive_instances))
-            print("The count of negative labels in test after nothing: %s", len(list_negative_instances))
+            print("The count of positive labels in train after nothing: %s", len(list_positive_instances))
+            print("The count of negative labels in train after nothing: %s", len(list_negative_instances))
 
         if(t==1):
             #undersample
