@@ -71,17 +71,6 @@ for o in range(0,5):
     y_shuffled = y[shuffle_indices]
 
 
-    # Split train/test set
-    x_train, x_dev = x_shuffled[:-1000], x_shuffled[-1000:]
-    y_train, y_dev = y_shuffled[:-1000], y_shuffled[-1000:]
-    print("X Y Train {}".format(len(x_train)))
-
-    print("X Dev {}".format(len(x_dev)))
-    print("Y Dev {}".format(len(y_dev)))
-
-    np_dev_x = x_dev
-    np_dev_y = y_dev
-
     classifier_list = []
 
     pos_value = np.array([0, 1])
@@ -90,8 +79,8 @@ for o in range(0,5):
     list_positive_instances = []
     list_negative_instances = []
 
-    for x in range(0, len(x_train)):
-        if (y_train[x] == pos_value).all():
+    for x in range(0, len(x_shuffled)):
+        if (y_shuffled[x] == pos_value).all():
             # print("Positive Label")
             list_positive_instances.append(x_train[x])
         else:
