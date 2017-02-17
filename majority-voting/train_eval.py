@@ -203,9 +203,8 @@ for o in range(0,5):
             print("Overall Length:%s", len(y_train))
             print("Vocabulary Size: {:d}".format(len(vocab_processor.vocabulary_)))
 
-
-
-
+        y_test = np_dev_y
+        x_test = np_dev_x
         for p in range(0,number_of_classifiers):
             rand_seed = randint(0, 9)
 
@@ -401,65 +400,65 @@ for o in range(0,5):
                 print(confusion_matrix(y_test, all_predictions))
                 print(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
 
-        if y_test is not None:
-            print("***************************************")
-            print("***********Results Sum of 10*********************")
-            print("length of the list {}".format(len(all_model_predictions)))
 
-            pos_value = np.array([0, 1])
-            neg_value = np.array([1, 0])
+        print("***************************************")
+        print("***********Results Sum of 10*********************")
+        print("length of the list {}".format(len(all_model_predictions)))
 
-            all_predictions = []
-            for w in range(0, 1000):
-                sumOne = 0
-                sumZero = 0
-                for t in range(0, number_of_classifiers):
-                    # print("classifier {} prediction: {}".format(t, testList[t][w]))
-                    if (all_model_predictions[t][w] == 1.0).all():
-                        # print("Positive Label")
-                        sumOne = sumOne + 1
-                    else:
-                        # print("Negative label")
-                        sumZero = sumZero + 1
-                if (sumOne > sumZero):
-                    all_predictions.append(1.0)
+        pos_value = np.array([0, 1])
+        neg_value = np.array([1, 0])
+
+        all_predictions = []
+        for w in range(0, 1000):
+            sumOne = 0
+            sumZero = 0
+            for t in range(0, number_of_classifiers):
+                # print("classifier {} prediction: {}".format(t, testList[t][w]))
+                if (all_model_predictions[t][w] == 1.0).all():
+                    # print("Positive Label")
+                    sumOne = sumOne + 1
                 else:
-                    all_predictions.append(0.0)
-                if (sumOne == 2):
-                    print("condition voted")
-                if (sumZero == 2):
-                    print("condition voted")
-                # testagain = np.argmax(np.array(all_predictions).astype(float), axis=1)
-            all_predictions = np.array(all_predictions)
+                    # print("Negative label")
+                    sumZero = sumZero + 1
+            if (sumOne > sumZero):
+                all_predictions.append(1.0)
+            else:
+                all_predictions.append(0.0)
+            if (sumOne == 2):
+                print("condition voted")
+            if (sumZero == 2):
+                print("condition voted")
+            # testagain = np.argmax(np.array(all_predictions).astype(float), axis=1)
+        all_predictions = np.array(all_predictions)
 
 
 
-            print("Length of All Predictions {}".format(len(all_predictions)))
-            print("Length of y test {}".format(len(y_test)))
-            correct_predictions = float(np.sum(all_predictions == y_test))
-            print("Total number of test examples: {}".format(len(y_test)))
-            print("All predictions%S",len(all_predictions))
-            print("y test: {}".format(len(y_test)))
-            print("x_test: {}".format(len(x_test)))
-            print("Incorrect Predictions %s", len(y_test) - correct_predictions)
-            print("Correct Predictions %s", len(y_test) - float(np.sum(all_predictions != y_test)))
-            print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
-            print("Precision, Recall, Fscore")
-            print(confusion_matrix(y_test, all_predictions))
-            print(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
-            outfile = open('rus_10_method'+str(t) + '_run' + str(o)+ ' classifier'+str(text_for_file)+'.txt','w')
-            outfile.write("\nTotal number of test examples: {}".format(len(y_test)))
-            outfile.write("\nAll predictions {}".format(len(all_predictions)))
-            outfile.write("\ny test: {}".format(len(y_test)))
-            outfile.write("\nx_test: {}".format(len(x_test)))
-            outfile.write("\nIncorrect Predictions {}".format(float(sum(all_predictions != y_test))))
-            outfile.write("\nCorrect Predictions {}".format(len(y_test) - float(sum(all_predictions != y_test))))
-            outfile.write("\nAccuracy: {:g}".format(correct_predictions / float(len(y_test))))
+        print("Length of All Predictions {}".format(len(all_predictions)))
+        print("Length of y test {}".format(len(y_test)))
+        correct_predictions = float(np.sum(all_predictions == y_test))
+        print("Total number of test examples: {}".format(len(y_test)))
+        print("All predictions%S",len(all_predictions))
+        print("y test: {}".format(len(y_test)))
+        print("x_test: {}".format(len(x_test)))
+        print("Incorrect Predictions %s", len(y_test) - correct_predictions)
+        print("Correct Predictions %s", len(y_test) - float(np.sum(all_predictions != y_test)))
+        print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
+        print("Precision, Recall, Fscore")
+        print(confusion_matrix(y_test, all_predictions))
+        print(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
+        outfile = open('rus_10_method'+str(t) + '_run' + str(o)+ ' classifier'+str(text_for_file)+'.txt','w')
+        outfile.write("\nTotal number of test examples: {}".format(len(y_test)))
+        outfile.write("\nAll predictions {}".format(len(all_predictions)))
+        outfile.write("\ny test: {}".format(len(y_test)))
+        outfile.write("\nx_test: {}".format(len(x_test)))
+        outfile.write("\nIncorrect Predictions {}".format(float(sum(all_predictions != y_test))))
+        outfile.write("\nCorrect Predictions {}".format(len(y_test) - float(sum(all_predictions != y_test))))
+        outfile.write("\nAccuracy: {:g}".format(correct_predictions / float(len(y_test))))
 
-            for t in range(0,len(classifier_list)):
-                outfile.write("\nClassifier {} accuracy {}".format(classifier_list[t].iteration,classifier_list[t].accuracy))
-            #outfile.write("\nPrecision, Recall, Fscore")
-        #     #outfile.write(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
-            outfile.write('\n'+np.array2string(confusion_matrix(y_test, all_predictions),separator=','))
-        #     #outfile.write(confusion_matrix(y_test, all_predictions))
-            outfile.close()
+        for t in range(0,len(classifier_list)):
+            outfile.write("\nClassifier {} accuracy {}".format(classifier_list[t].iteration,classifier_list[t].accuracy))
+        #outfile.write("\nPrecision, Recall, Fscore")
+    #     #outfile.write(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
+        outfile.write('\n'+np.array2string(confusion_matrix(y_test, all_predictions),separator=','))
+    #     #outfile.write(confusion_matrix(y_test, all_predictions))
+        outfile.close()
