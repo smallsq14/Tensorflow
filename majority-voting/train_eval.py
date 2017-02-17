@@ -576,7 +576,7 @@ for o in range(0,5):
 
             if y_test is not None:
                 print("***************************************")
-                print("***********Results**" + str(p) + " *******************")
+                print("***********Results**" + str(t) + " *******************")
                 print("Length of All Predictions {}".format(len(all_predictions)))
                 print("Length of y test {}".format(len(y_test)))
                 correct_predictions = float(np.sum(all_predictions == y_test))
