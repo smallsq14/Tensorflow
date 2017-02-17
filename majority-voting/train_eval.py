@@ -114,7 +114,10 @@ for o in range(0,5):
     list_negative_instances = list_negative_instances[:-int(negative_test_size)]
     for t in range(0,3):
         run_accuracy = []
-
+        x_train = []
+        y_train = []
+        all_predictions = []
+        positive_labels =[]
         if(t==0):
             #no change
             rand_seed = int(t)
@@ -205,15 +208,206 @@ for o in range(0,5):
 
         y_test = np_dev_y
         x_test = np_dev_x
-        for p in range(0,number_of_classifiers):
-            rand_seed = randint(0, 9)
+        if ((t==1)or(t==2)):
+            for p in range(0,number_of_classifiers):
+                rand_seed = randint(0, 9)
 
-            # Training
-            # ==================================================
+                # Training
+                # ==================================================
+                with tf.Graph().as_default():
+                    session_conf = tf.ConfigProto(
+                      allow_soft_placement=FLAGS.allow_soft_placement,
+                      log_device_placement=FLAGS.log_device_placement)
+                    sess = tf.Session(config=session_conf)
+                    with sess.as_default():
+                        cnn = TextCNN(
+                            sequence_length=x_train.shape[1],
+                            num_classes=2,
+                            vocab_size=len(vocab_processor.vocabulary_),
+                            embedding_size=FLAGS.embedding_dim,
+                            filter_sizes=list(map(int, FLAGS.filter_sizes.split(","))),
+                            num_filters=FLAGS.num_filters,
+                            l2_reg_lambda=FLAGS.l2_reg_lambda)
+
+                        # Define Training procedure
+                        global_step = tf.Variable(0, name="global_step", trainable=False)
+                        optimizer = tf.train.AdamOptimizer(1e-3)
+                        grads_and_vars = optimizer.compute_gradients(cnn.loss)
+                        train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
+
+                        # Keep track of gradient values and sparsity (optional)
+                        grad_summaries = []
+                        for g, v in grads_and_vars:
+                            if g is not None:
+                                grad_hist_summary = tf.histogram_summary("{}/grad/hist".format(v.name), g)
+                                sparsity_summary = tf.scalar_summary("{}/grad/sparsity".format(v.name), tf.nn.zero_fraction(g))
+                                grad_summaries.append(grad_hist_summary)
+                                grad_summaries.append(sparsity_summary)
+                        grad_summaries_merged = tf.merge_summary(grad_summaries)
+
+                        # Output directory for models and summaries
+                        timestamp = str(int(time.time()))
+                        out_dir = os.path.abspath(os.path.join(os.path.curdir, "runs", timestamp))
+                        print("Writing to {}\n".format(out_dir))
+
+                        # Summaries for loss and accuracy
+                        loss_summary = tf.scalar_summary("loss", cnn.loss)
+                        acc_summary = tf.scalar_summary("accuracy", cnn.accuracy)
+
+                        # Train Summaries
+                        train_summary_op = tf.merge_summary([loss_summary, acc_summary, grad_summaries_merged])
+                        train_summary_dir = os.path.join(out_dir, "summaries", "train")
+                        train_summary_writer = tf.train.SummaryWriter(train_summary_dir, sess.graph)
+
+                        # Dev summaries
+                        dev_summary_op = tf.merge_summary([loss_summary, acc_summary])
+                        dev_summary_dir = os.path.join(out_dir, "summaries", "dev")
+                        dev_summary_writer = tf.train.SummaryWriter(dev_summary_dir, sess.graph)
+
+                        # Checkpoint directory. Tensorflow assumes this directory already exists so we need to create it
+                        checkpoint_dir = os.path.abspath(os.path.join(out_dir, "checkpoints"))
+                        checkpoint_dir_for_eval = checkpoint_dir
+                        checkpoint_prefix = os.path.join(checkpoint_dir, "model")
+                        if not os.path.exists(checkpoint_dir):
+                            os.makedirs(checkpoint_dir)
+                        saver = tf.train.Saver(tf.all_variables())
+
+                        print("Checkpoint Dir is {}".format(out_dir))
+
+                        # Write vocabulary
+                        vocab_processor.save(os.path.join(out_dir, "vocab"))
+
+                        # Initialize all variables
+                        sess.run(tf.initialize_all_variables())
+
+                        def train_step(x_batch, y_batch):
+                            """
+                            A single training step
+                            """
+                            feed_dict = {
+                              cnn.input_x: x_batch,
+                              cnn.input_y: y_batch,
+                              cnn.dropout_keep_prob: FLAGS.dropout_keep_prob
+                            }
+                            _, step, summaries, loss, accuracy = sess.run(
+                                [train_op, global_step, train_summary_op, cnn.loss, cnn.accuracy],
+                                feed_dict)
+                            time_str = datetime.datetime.now().isoformat()
+                            #print("TRAIN {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+                            train_summary_writer.add_summary(summaries, step)
+
+                        def dev_step(x_batch, y_batch, writer=None):
+                            """
+                            Evaluates model on a dev set
+                            """
+                            feed_dict = {
+                              cnn.input_x: x_batch,
+                              cnn.input_y: y_batch,
+                              cnn.dropout_keep_prob: 1.0
+                            }
+                            step, summaries, loss, accuracy = sess.run(
+                                [global_step, dev_summary_op, cnn.loss, cnn.accuracy],
+                                feed_dict)
+                            time_str = datetime.datetime.now().isoformat()
+                            run_accuracy.append(accuracy)
+                            #print("Run Accuracy List:")
+                            print(run_accuracy)
+                            #print("DEV {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+                        #if writer:
+                        #        writer.add_summary(summaries, step)
+
+                        # Generate batches
+                        batches = data_helpers.batch_iter(
+                            list(zip(x_train, y_train)), FLAGS.batch_size, FLAGS.num_epochs)
+                        # Training loop. For each batch...
+                        for batch in batches:
+                            x_batch, y_batch = zip(*batch)
+                            train_step(x_batch, y_batch)
+                            current_step = tf.train.global_step(sess, global_step)
+                            if current_step % FLAGS.evaluate_every == 0:
+                                #print("\nEvaluation:")
+                                dev_step(x_dev, y_dev, writer=dev_summary_writer)
+
+                            if current_step % FLAGS.checkpoint_every == 0:
+                                path = saver.save(sess, checkpoint_prefix, global_step=current_step)
+                                #print("Saved model checkpoint to {}\n".format(path))
+                        classifier_list.append(Classifier(checkpoint=checkpoint_dir,accuracy=run_accuracy[len(run_accuracy)-1],iteration=p))
+                        #print("The Final Accuracy is {}".format(run_accuracy))
+
+
+
+                y_test = np_dev_y
+                x_test = np_dev_x
+                #
+                # Map data into vocabulary
+                vocab_path = os.path.join(checkpoint_dir_for_eval, "..", "vocab")
+                vocab_processor = learn.preprocessing.VocabularyProcessor.restore(vocab_path)
+                y_test = np.argmax(y_test, axis=1)
+                #
+                print("\nEvaluating...\n")
+                #
+                # # Evaluation
+                # # ==================================================
+                all_predictions = []
+                checkpoint_file = tf.train.latest_checkpoint(checkpoint_dir_for_eval)
+                graph = tf.Graph()
+                with graph.as_default():
+                    session_conf = tf.ConfigProto(
+                      allow_soft_placement=FLAGS.allow_soft_placement,
+                      log_device_placement=FLAGS.log_device_placement)
+                    sess = tf.Session(config=session_conf)
+                    with sess.as_default():
+                        # Load the saved meta graph and restore variables
+                        saver = tf.train.import_meta_graph("{}.meta".format(checkpoint_file))
+                        saver.restore(sess, checkpoint_file)
+                #
+                #         # Get the placeholders from the graph by name
+                        input_x = graph.get_operation_by_name("input_x").outputs[0]
+                        # input_y = graph.get_operation_by_name("input_y").outputs[0]
+                        dropout_keep_prob = graph.get_operation_by_name("dropout_keep_prob").outputs[0]
+                #
+                #         # Tensors we want to evaluate
+                        predictions = graph.get_operation_by_name("output/predictions").outputs[0]
+                #
+                #         # Generate batches for one epoch
+                        batches = data_helpers.batch_iter(list(x_test), FLAGS.batch_size, 1, shuffle=False)
+                #
+                #         # Collect the predictions here
+                        #check this later
+                        #all_predictions = []
+                #     #print ("Number of batches: %s",len(batches))
+                        for x_test_batch in batches:
+                            batch_predictions = sess.run(predictions, {input_x: x_test_batch, dropout_keep_prob: 1.0})
+                            all_predictions = np.concatenate([all_predictions, batch_predictions])
+
+                if y_test is not None:
+                    print("***************************************")
+                    print("***********Results**" + str(p) +  " *******************")
+                    print("All Predictions:\n")
+                    print (all_predictions)
+                    np.save('all_predictions_'+str(p)+'.txt', all_predictions)
+                    all_model_predictions.append(all_predictions)
+                    print("length of the list {}".format(len(all_model_predictions)))
+                    print (y_test)
+                    print("--End All Predictions\m")
+                    print("Length of All Predictions {}".format(len(all_predictions)))
+                    print("Length of y test {}".format(len(y_test)))
+                    correct_predictions = float(np.sum(all_predictions == y_test))
+                    print("Total number of test examples: {}".format(len(y_test)))
+                    print("All predictions%S",len(all_predictions))
+                    print("y test: {}".format(len(y_test)))
+                    print("x_test: {}".format(len(x_test)))
+                    print("Incorrect Predictions %s", len(y_test) - correct_predictions)
+                    print("Correct Predictions %s", len(y_test) - float(np.sum(all_predictions != y_test)))
+                    print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
+                    print("Precision, Recall, Fscore")
+                    print(confusion_matrix(y_test, all_predictions))
+                    print(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
+        else:
             with tf.Graph().as_default():
                 session_conf = tf.ConfigProto(
-                  allow_soft_placement=FLAGS.allow_soft_placement,
-                  log_device_placement=FLAGS.log_device_placement)
+                    allow_soft_placement=FLAGS.allow_soft_placement,
+                    log_device_placement=FLAGS.log_device_placement)
                 sess = tf.Session(config=session_conf)
                 with sess.as_default():
                     cnn = TextCNN(
@@ -236,7 +430,8 @@ for o in range(0,5):
                     for g, v in grads_and_vars:
                         if g is not None:
                             grad_hist_summary = tf.histogram_summary("{}/grad/hist".format(v.name), g)
-                            sparsity_summary = tf.scalar_summary("{}/grad/sparsity".format(v.name), tf.nn.zero_fraction(g))
+                            sparsity_summary = tf.scalar_summary("{}/grad/sparsity".format(v.name),
+                                                                 tf.nn.zero_fraction(g))
                             grad_summaries.append(grad_hist_summary)
                             grad_summaries.append(sparsity_summary)
                     grad_summaries_merged = tf.merge_summary(grad_summaries)
@@ -276,40 +471,44 @@ for o in range(0,5):
                     # Initialize all variables
                     sess.run(tf.initialize_all_variables())
 
+
                     def train_step(x_batch, y_batch):
                         """
                         A single training step
                         """
                         feed_dict = {
-                          cnn.input_x: x_batch,
-                          cnn.input_y: y_batch,
-                          cnn.dropout_keep_prob: FLAGS.dropout_keep_prob
+                            cnn.input_x: x_batch,
+                            cnn.input_y: y_batch,
+                            cnn.dropout_keep_prob: FLAGS.dropout_keep_prob
                         }
                         _, step, summaries, loss, accuracy = sess.run(
                             [train_op, global_step, train_summary_op, cnn.loss, cnn.accuracy],
                             feed_dict)
                         time_str = datetime.datetime.now().isoformat()
-                        #print("TRAIN {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+                        # print("TRAIN {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
                         train_summary_writer.add_summary(summaries, step)
+
 
                     def dev_step(x_batch, y_batch, writer=None):
                         """
                         Evaluates model on a dev set
                         """
                         feed_dict = {
-                          cnn.input_x: x_batch,
-                          cnn.input_y: y_batch,
-                          cnn.dropout_keep_prob: 1.0
+                            cnn.input_x: x_batch,
+                            cnn.input_y: y_batch,
+                            cnn.dropout_keep_prob: 1.0
                         }
                         step, summaries, loss, accuracy = sess.run(
                             [global_step, dev_summary_op, cnn.loss, cnn.accuracy],
                             feed_dict)
                         time_str = datetime.datetime.now().isoformat()
                         run_accuracy.append(accuracy)
-                        #print("Run Accuracy List:")
+                        # print("Run Accuracy List:")
                         print(run_accuracy)
-                        #print("DEV {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
-                    #if writer:
+                        # print("DEV {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+
+
+                    # if writer:
                     #        writer.add_summary(summaries, step)
 
                     # Generate batches
@@ -321,21 +520,20 @@ for o in range(0,5):
                         train_step(x_batch, y_batch)
                         current_step = tf.train.global_step(sess, global_step)
                         if current_step % FLAGS.evaluate_every == 0:
-                            #print("\nEvaluation:")
+                            # print("\nEvaluation:")
                             dev_step(x_dev, y_dev, writer=dev_summary_writer)
 
                         if current_step % FLAGS.checkpoint_every == 0:
                             path = saver.save(sess, checkpoint_prefix, global_step=current_step)
-                            #print("Saved model checkpoint to {}\n".format(path))
-                    classifier_list.append(Classifier(checkpoint=checkpoint_dir,accuracy=run_accuracy[len(run_accuracy)-1],iteration=p))
-                    #print("The Final Accuracy is {}".format(run_accuracy))
+                            # print("Saved model checkpoint to {}\n".format(path))
+                    #classifier_list.append(
+                        #Classifier(checkpoint=checkpoint_dir, accuracy=run_accuracy[len(run_accuracy) - 1],
+                                  # iteration=p))
+                    # print("The Final Accuracy is {}".format(run_accuracy))
 
-
-        #Print Classifier List and Sort
-            y_test = np_dev_y
-            x_test = np_dev_x
-            #
-            # Map data into vocabulary
+        print("***************************************")
+        print("***********Results Method " +str(t)+" *********************")
+        if (t==0):
             vocab_path = os.path.join(checkpoint_dir_for_eval, "..", "vocab")
             vocab_processor = learn.preprocessing.VocabularyProcessor.restore(vocab_path)
             y_test = np.argmax(y_test, axis=1)
@@ -349,116 +547,119 @@ for o in range(0,5):
             graph = tf.Graph()
             with graph.as_default():
                 session_conf = tf.ConfigProto(
-                  allow_soft_placement=FLAGS.allow_soft_placement,
-                  log_device_placement=FLAGS.log_device_placement)
+                    allow_soft_placement=FLAGS.allow_soft_placement,
+                    log_device_placement=FLAGS.log_device_placement)
                 sess = tf.Session(config=session_conf)
                 with sess.as_default():
                     # Load the saved meta graph and restore variables
                     saver = tf.train.import_meta_graph("{}.meta".format(checkpoint_file))
                     saver.restore(sess, checkpoint_file)
-            #
-            #         # Get the placeholders from the graph by name
+                    #
+                    #         # Get the placeholders from the graph by name
                     input_x = graph.get_operation_by_name("input_x").outputs[0]
                     # input_y = graph.get_operation_by_name("input_y").outputs[0]
                     dropout_keep_prob = graph.get_operation_by_name("dropout_keep_prob").outputs[0]
-            #
-            #         # Tensors we want to evaluate
+                    #
+                    #         # Tensors we want to evaluate
                     predictions = graph.get_operation_by_name("output/predictions").outputs[0]
-            #
-            #         # Generate batches for one epoch
+                    #
+                    #         # Generate batches for one epoch
                     batches = data_helpers.batch_iter(list(x_test), FLAGS.batch_size, 1, shuffle=False)
-            #
-            #         # Collect the predictions here
-                    #check this later
-                    #all_predictions = []
-            #     #print ("Number of batches: %s",len(batches))
+                    #
+                    #         # Collect the predictions here
+                    # check this later
+                    # all_predictions = []
+                    #     #print ("Number of batches: %s",len(batches))
                     for x_test_batch in batches:
                         batch_predictions = sess.run(predictions, {input_x: x_test_batch, dropout_keep_prob: 1.0})
                         all_predictions = np.concatenate([all_predictions, batch_predictions])
 
             if y_test is not None:
                 print("***************************************")
-                print("***********Results**" + str(p) +  " *******************")
-                print("All Predictions:\n")
-                print (all_predictions)
-                np.save('all_predictions_'+str(p)+'.txt', all_predictions)
-                all_model_predictions.append(all_predictions)
-                print("length of the list {}".format(len(all_model_predictions)))
-                print (y_test)
-                print("--End All Predictions\m")
+                print("***********Results**" + str(p) + " *******************")
                 print("Length of All Predictions {}".format(len(all_predictions)))
                 print("Length of y test {}".format(len(y_test)))
                 correct_predictions = float(np.sum(all_predictions == y_test))
                 print("Total number of test examples: {}".format(len(y_test)))
-                print("All predictions%S",len(all_predictions))
+                print("All predictions%S", len(all_predictions))
                 print("y test: {}".format(len(y_test)))
                 print("x_test: {}".format(len(x_test)))
                 print("Incorrect Predictions %s", len(y_test) - correct_predictions)
                 print("Correct Predictions %s", len(y_test) - float(np.sum(all_predictions != y_test)))
-                print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
+                print("Accuracy: {:g}".format(correct_predictions / float(len(y_test))))
                 print("Precision, Recall, Fscore")
                 print(confusion_matrix(y_test, all_predictions))
                 print(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
+                outfile = open('rus_10_method' + str(t) + '_run' + str(o) + ' classifier' + str(text_for_file) + '.txt',
+                               'w')
+                outfile.write("\nTotal number of test examples: {}".format(len(y_test)))
+                outfile.write("\nAll predictions {}".format(len(all_predictions)))
+                outfile.write("\ny test: {}".format(len(y_test)))
+                outfile.write("\nx_test: {}".format(len(x_test)))
+                outfile.write("\nIncorrect Predictions {}".format(float(sum(all_predictions != y_test))))
+                outfile.write("\nCorrect Predictions {}".format(len(y_test) - float(sum(all_predictions != y_test))))
+                outfile.write("\nAccuracy: {:g}".format(correct_predictions / float(len(y_test))))
 
+                outfile.write('\n' + np.array2string(confusion_matrix(y_test, all_predictions), separator=','))
+                #     #outfile.write(confusion_matrix(y_test, all_predictions))
+                outfile.close()
+        else:
+            print("length of the list {}".format(len(all_model_predictions)))
 
-        print("***************************************")
-        print("***********Results Sum of 10*********************")
-        print("length of the list {}".format(len(all_model_predictions)))
+            pos_value = np.array([0, 1])
+            neg_value = np.array([1, 0])
 
-        pos_value = np.array([0, 1])
-        neg_value = np.array([1, 0])
-
-        all_predictions = []
-        for w in range(0, 1000):
-            sumOne = 0
-            sumZero = 0
-            for t in range(0, number_of_classifiers):
-                # print("classifier {} prediction: {}".format(t, testList[t][w]))
-                if (all_model_predictions[t][w] == 1.0).all():
-                    # print("Positive Label")
-                    sumOne = sumOne + 1
+            all_predictions = []
+            for w in range(0, int(positive_test_size) + int(negative_test_size)):
+                sumOne = 0
+                sumZero = 0
+                for t in range(0, number_of_classifiers):
+                    # print("classifier {} prediction: {}".format(t, testList[t][w]))
+                    if (all_model_predictions[t][w] == 1.0).all():
+                        # print("Positive Label")
+                        sumOne = sumOne + 1
+                    else:
+                        # print("Negative label")
+                        sumZero = sumZero + 1
+                if (sumOne > sumZero):
+                    all_predictions.append(1.0)
                 else:
-                    # print("Negative label")
-                    sumZero = sumZero + 1
-            if (sumOne > sumZero):
-                all_predictions.append(1.0)
-            else:
-                all_predictions.append(0.0)
-            if (sumOne == 2):
-                print("condition voted")
-            if (sumZero == 2):
-                print("condition voted")
-            # testagain = np.argmax(np.array(all_predictions).astype(float), axis=1)
-        all_predictions = np.array(all_predictions)
+                    all_predictions.append(0.0)
+                if (sumOne == 2):
+                    print("condition voted")
+                if (sumZero == 2):
+                    print("condition voted")
+                # testagain = np.argmax(np.array(all_predictions).astype(float), axis=1)
+            all_predictions = np.array(all_predictions)
 
 
 
-        print("Length of All Predictions {}".format(len(all_predictions)))
-        print("Length of y test {}".format(len(y_test)))
-        correct_predictions = float(np.sum(all_predictions == y_test))
-        print("Total number of test examples: {}".format(len(y_test)))
-        print("All predictions%S",len(all_predictions))
-        print("y test: {}".format(len(y_test)))
-        print("x_test: {}".format(len(x_test)))
-        print("Incorrect Predictions %s", len(y_test) - correct_predictions)
-        print("Correct Predictions %s", len(y_test) - float(np.sum(all_predictions != y_test)))
-        print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
-        print("Precision, Recall, Fscore")
-        print(confusion_matrix(y_test, all_predictions))
-        print(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
-        outfile = open('rus_10_method'+str(t) + '_run' + str(o)+ ' classifier'+str(text_for_file)+'.txt','w')
-        outfile.write("\nTotal number of test examples: {}".format(len(y_test)))
-        outfile.write("\nAll predictions {}".format(len(all_predictions)))
-        outfile.write("\ny test: {}".format(len(y_test)))
-        outfile.write("\nx_test: {}".format(len(x_test)))
-        outfile.write("\nIncorrect Predictions {}".format(float(sum(all_predictions != y_test))))
-        outfile.write("\nCorrect Predictions {}".format(len(y_test) - float(sum(all_predictions != y_test))))
-        outfile.write("\nAccuracy: {:g}".format(correct_predictions / float(len(y_test))))
+            print("Length of All Predictions {}".format(len(all_predictions)))
+            print("Length of y test {}".format(len(y_test)))
+            correct_predictions = float(np.sum(all_predictions == y_test))
+            print("Total number of test examples: {}".format(len(y_test)))
+            print("All predictions%S",len(all_predictions))
+            print("y test: {}".format(len(y_test)))
+            print("x_test: {}".format(len(x_test)))
+            print("Incorrect Predictions %s", len(y_test) - correct_predictions)
+            print("Correct Predictions %s", len(y_test) - float(np.sum(all_predictions != y_test)))
+            print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
+            print("Precision, Recall, Fscore")
+            print(confusion_matrix(y_test, all_predictions))
+            print(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
+            outfile = open('rus_10_method'+str(t) + '_run' + str(o)+ ' classifier'+str(text_for_file)+'.txt','w')
+            outfile.write("\nTotal number of test examples: {}".format(len(y_test)))
+            outfile.write("\nAll predictions {}".format(len(all_predictions)))
+            outfile.write("\ny test: {}".format(len(y_test)))
+            outfile.write("\nx_test: {}".format(len(x_test)))
+            outfile.write("\nIncorrect Predictions {}".format(float(sum(all_predictions != y_test))))
+            outfile.write("\nCorrect Predictions {}".format(len(y_test) - float(sum(all_predictions != y_test))))
+            outfile.write("\nAccuracy: {:g}".format(correct_predictions / float(len(y_test))))
 
-        for t in range(0,len(classifier_list)):
-            outfile.write("\nClassifier {} accuracy {}".format(classifier_list[t].iteration,classifier_list[t].accuracy))
-        #outfile.write("\nPrecision, Recall, Fscore")
-    #     #outfile.write(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
-        outfile.write('\n'+np.array2string(confusion_matrix(y_test, all_predictions),separator=','))
-    #     #outfile.write(confusion_matrix(y_test, all_predictions))
-        outfile.close()
+            for t in range(0,len(classifier_list)):
+                outfile.write("\nClassifier {} accuracy {}".format(classifier_list[t].iteration,classifier_list[t].accuracy))
+            #outfile.write("\nPrecision, Recall, Fscore")
+        #     #outfile.write(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
+            outfile.write('\n'+np.array2string(confusion_matrix(y_test, all_predictions),separator=','))
+        #     #outfile.write(confusion_matrix(y_test, all_predictions))
+            outfile.close()
