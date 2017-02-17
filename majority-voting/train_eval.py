@@ -110,8 +110,8 @@ for o in range(0,5):
     x_dev = np.array(neg_cut_dev + pos_cut_dev)
     np_dev_x = x_dev
     np_dev_y = y_dev
-    list_positive_instances = list_positive_instances[:imbalance_size]
-    list_negative_instances = list_negative_instances[:negative_test_size]
+    list_positive_instances = list_positive_instances[:(imbalance_size)]
+    list_negative_instances = list_negative_instances[:int(negative_test_size)]
     for t in range(0,3):
         run_accuracy = []
         x_train = []
