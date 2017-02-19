@@ -88,10 +88,14 @@ for o in range(0,5):
     negative_examples = [s.strip() for s in negative_examples]
     positive_examples = positive_examples[0:500]
 
-    #x_text = positive_examples + negative_examples
+    x_text = positive_examples + negative_examples
     print("Length of Positive Examples:{}".format(len(positive_examples)))
     positive_examples = [clean_str(sent) for sent in positive_examples]
     negative_examples = [clean_str(sent) for sent in negative_examples]
+
+    # Build vocabulary
+    max_document_length = max([len(x.split(" ")) for x in x_text])
+    vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
 
 
     classifier_list = []
@@ -160,7 +164,7 @@ for o in range(0,5):
             print("Length of positive labels:%s", len(positive_labels))
             print("Length of negative labels:%s", len(negative_labels))
             y_t = np.concatenate([positive_labels, negative_labels], 0)
-            x_t = np.array(list_positive_instances + list_negative_instances)
+            x_t = np.array(list(vocab_processor.fit_transform(list_positive_instances + list_negative_instances)))
             np.random.seed(rand_seed)
             shuffle_indices = np.random.permutation(np.arange(len(y_t)))
             x_train = x_t[shuffle_indices]
