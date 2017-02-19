@@ -14,6 +14,26 @@ from text_cnn import TextCNN
 from tensorflow.contrib import learn
 
 
+def clean_str(string):
+    """
+    Tokenization/string cleaning for all datasets except for SST.
+    Original taken from https://github.com/yoonkim/CNN_sentence/blob/master/process_data.py
+    """
+    string = re.sub(r"[^A-Za-z0-9(),!?\'\`]", " ", string)
+    string = re.sub(r"\'s", " \'s", string)
+    string = re.sub(r"\'ve", " \'ve", string)
+    string = re.sub(r"n\'t", " n\'t", string)
+    string = re.sub(r"\'re", " \'re", string)
+    string = re.sub(r"\'d", " \'d", string)
+    string = re.sub(r"\'ll", " \'ll", string)
+    string = re.sub(r",", " , ", string)
+    string = re.sub(r"!", " ! ", string)
+    string = re.sub(r"\(", " \( ", string)
+    string = re.sub(r"\)", " \) ", string)
+    string = re.sub(r"\?", " \? ", string)
+    string = re.sub(r"\s{2,}", " ", string)
+    return string.strip().lower()
+
 class Classifier(object):
     def __init__(self, checkpoint=None, accuracy=None, iteration=None):
         self.checkpoint = checkpoint
@@ -55,20 +75,18 @@ number_of_classifiers = 10
 run_accuracy = []
 for o in range(0,5):
 
-    x_text, y = data_helpers.load_data_and_labels()
 
-    # Build vocabulary
-    max_document_length = max([len(x.split(" ")) for x in x_text])
-    vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
-    x = np.array(list(vocab_processor.fit_transform(x_text)))
 
-    # Randomly shuffle data
-    np.random.seed(random_seed)
-    shuffle_indices = np.random.permutation(np.arange(len(y)))
+    positive_examples = list(open("./data/rt-polaritydata/rt-polarity.pos", "r").readlines())
+    positive_examples = [s.strip() for s in positive_examples]
+    negative_examples = list(open("./data/rt-polaritydata/rt-polarity.neg", "r").readlines())
+    negative_examples = [s.strip() for s in negative_examples]
+    positive_examples = positive_examples[0:500]
 
-    #x_raw_shuffled = x_text[shuffle_indices]
-    x_shuffled = x[shuffle_indices]
-    y_shuffled = y[shuffle_indices]
+    #x_text = positive_examples + negative_examples
+    print("Length of Positive Examples:{}".format(len(positive_examples)))
+    positive_examples = [clean_str(sent) for sent in positive_examples]
+    negative_examples = [clean_str(sent) for sent in negative_examples]
 
 
     classifier_list = []
@@ -78,20 +96,13 @@ for o in range(0,5):
 
     list_positive_instances = []
     list_negative_instances = []
-
-    for x in range(0, len(x_shuffled)):
-        if (y_shuffled[x] == pos_value).all():
-            # print("Positive Label")
-            list_positive_instances.append(x_shuffled[x])
-        else:
-            # print("Negative label")
-            list_negative_instances.append(x_shuffled[x])
     #final value
 
     text_for_file ="4331_positive"
     imbalance_size = 500
+    list_positive_instances = positive_examples
+    list_negative_instances = negative_examples
 
-    del list_positive_instances[int(imbalance_size):]
     positive_test_size = round(.20 * imbalance_size)
     positive_train_size = round(imbalance_size - positive_test_size)
     negative_test_size = round(.20 * len(list_negative_instances))
