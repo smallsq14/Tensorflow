@@ -60,8 +60,8 @@ for o in range(0,5):
     # Build vocabulary
     max_document_length = max([len(x.split(" ")) for x in x_text])
     vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
-    #x = np.array(list(vocab_processor.fit_transform(x_text)))
-    x = np.array(list(x_text))
+    x = np.array(list(vocab_processor.fit_transform(x_text)))
+
     # Randomly shuffle data
     np.random.seed(random_seed)
     shuffle_indices = np.random.permutation(np.arange(len(y)))
@@ -91,7 +91,6 @@ for o in range(0,5):
     text_for_file ="4331_positive"
     imbalance_size = 500
     del list_positive_instances[500:]
-    print(list_positive_instances)
     #list_positive_instances = list_positive_instances[:-int(imbalance_size)]
     positive_test_size = round(.20 * imbalance_size)
     positive_train_size = round(imbalance_size - positive_test_size)
@@ -113,14 +112,11 @@ for o in range(0,5):
     negative_labels = [[1, 0] for _ in neg_cut_dev]
     y_dev = np.concatenate([positive_labels, negative_labels], 0)
     x_dev = np.array(neg_cut_dev + pos_cut_dev)
-    print("dev")
-    print(x_dev)
     print("Length of Cut positive test:%s", len(pos_cut_dev))
     print("Length of Cut negative test:%s", len(neg_cut_dev))
     list_positive_instances = list_positive_instances[0:int(positive_train_size)]
     list_negative_instances = list_negative_instances[0:int(negative_train_size)]
-    print("train")
-    print(list_positive_instances)
+
     print("Length of Cut positive train:%s", len(list_positive_instances))
     print("Length of Cut negative train:%s", len(list_negative_instances))
 
@@ -226,8 +222,8 @@ for o in range(0,5):
             print("Overall Length:%s", len(y_train))
             print("Vocabulary Size: {:d}".format(len(vocab_processor.vocabulary_)))
 
-        y_test = dev_y
-        x_test = dev_x
+        y_test = y_dev
+        x_test = x_dev
         print("Checking length of y_test{}".format(len(y_test)))
         if ((t==1)or(t==2)):
             for p in range(0,number_of_classifiers):
