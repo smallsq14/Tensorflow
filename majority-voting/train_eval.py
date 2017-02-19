@@ -98,20 +98,22 @@ for o in range(0,5):
     print("Negative Test Size{}".format(negative_test_size))
     print("Positive Train Size{}".format(positive_train_size))
     print("Negative Train Size{}".format(negative_train_size))
-    neg_cut_dev = list_negative_instances[int(negative_train_size)+1:]
-    pos_cut_dev = list_positive_instances[int(positive_train_size)+1:]
+
+    neg_cut_dev = list_negative_instances[int(negative_test_size):]
+    pos_cut_dev = list_positive_instances[int(positive_test_size):]
     positive_labels = [[0, 1] for _ in pos_cut_dev]
     negative_labels = [[1, 0] for _ in neg_cut_dev]
     print("Length of Cut positive test:%s", len(pos_cut_dev))
     print("Length of Cut negative test:%s", len(neg_cut_dev))
+    list_positive_instances = list_positive_instances[:int(positive_train_size)]
+    list_negative_instances = list_negative_instances[:int(negative_train_size)]
     print("Length of Cut positive train:%s", len(positive_labels))
     print("Length of Cut negative train:%s", len(negative_labels))
     y_dev = np.concatenate([positive_labels, negative_labels], 0)
     x_dev = np.array(neg_cut_dev + pos_cut_dev)
     np_dev_x = x_dev
     np_dev_y = y_dev
-    list_positive_instances = list_positive_instances[int(positive_train_size)]
-    list_negative_instances = list_negative_instances[int(negative_train_size)]
+
     for t in range(0,3):
         run_accuracy = []
         x_train = []
