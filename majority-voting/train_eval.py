@@ -131,7 +131,7 @@ for o in range(0,5):
     positive_labels = [[0, 1] for _ in pos_cut_dev]
     negative_labels = [[1, 0] for _ in neg_cut_dev]
     y_dev = np.concatenate([positive_labels, negative_labels], 0)
-    x_dev = np.array(pos_cut_dev + neg_cut_dev)
+    x_dev = np.array(list(vocab_processor.fit_transform(pos_cut_dev + neg_cut_dev)))
     print("Length of Cut positive test:%s", len(pos_cut_dev))
     print("Length of Cut negative test:%s", len(neg_cut_dev))
     list_positive_instances = pos_cut_train
