@@ -99,14 +99,12 @@ for o in range(0,5):
     print("Negative Test Size{}".format(negative_test_size))
     print("Positive Train Size{}".format(positive_train_size))
     print("Negative Train Size{}".format(negative_train_size))
-    pos_cut_dev = list_positive_instances[:-int(positive_train_size)]
-    neg_cut_dev = list_negative_instances[:-int(negative_train_size)]
+    pos_cut_dev, pos_cut_train = list_positive_instances[:-int(positive_train_size)], list_positive_instances[-int(positive_train_size):]
+    neg_cut_dev, neg_cut_train = list_negative_instances[:-int(negative_train_size)], list_negative_instances[-int(negative_train_size):]
     positive_labels = [[0, 1] for _ in pos_cut_dev]
     negative_labels = [[1, 0] for _ in neg_cut_dev]
     print("Length of Cut positive test:%s", len(pos_cut_dev))
     print("Length of Cut negative test:%s", len(neg_cut_dev))
-    list_positive_instances = list_positive_instances[-int(positive_train_size):]
-    list_negative_instances = list_negative_instances[-int(negative_train_size):]
     print("Length of Cut positive train:%s", len(list_positive_instances))
     print("Length of Cut negative train:%s", len(list_negative_instances))
     y_dev = np.concatenate([positive_labels, negative_labels], 0)
@@ -128,12 +126,12 @@ for o in range(0,5):
             #no change
             rand_seed = int(t)
             print("running Method A")
-            positive_labels = [[0, 1] for _ in list_positive_instances]
-            negative_labels = [[1, 0] for _ in list_negative_instances]
+            positive_labels = [[0, 1] for _ in pos_cut_train]
+            negative_labels = [[1, 0] for _ in neg_cut_train]
             print("Length of positive labels:%s", len(positive_labels))
             print("Length of negative labels:%s", len(negative_labels))
-            y_t = np.concatenate([positive_labels, negative_labels], 0)
-            x_t = np.array(list_positive_instances + list_negative_instances)
+            y_t = np.concatenate([pos_cut_train, negative_labels], 0)
+            x_t = np.array(list_positive_instances + neg_cut_train)
             np.random.seed(rand_seed)
             shuffle_indices = np.random.permutation(np.arange(len(y_t)))
             x_train = x_t[shuffle_indices]
