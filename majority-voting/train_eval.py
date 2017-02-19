@@ -130,8 +130,8 @@ for o in range(0,5):
             negative_labels = [[1, 0] for _ in neg_cut_train]
             print("Length of positive labels:%s", len(positive_labels))
             print("Length of negative labels:%s", len(negative_labels))
-            y_t = np.concatenate([pos_cut_train, negative_labels], 0)
-            x_t = np.array(list_positive_instances + neg_cut_train)
+            y_t = np.concatenate([positive_labels, negative_labels], 0)
+            x_t = np.array(pos_cut_train + neg_cut_train)
             np.random.seed(rand_seed)
             shuffle_indices = np.random.permutation(np.arange(len(y_t)))
             x_train = x_t[shuffle_indices]
