@@ -531,6 +531,7 @@ for o in range(0,5):
                     #        writer.add_summary(summaries, step)
 
                     # Generate batches
+                    print("Length of Train {}".format(len(x_train)))
                     batches = data_helpers.batch_iter(
                         list(zip(x_train, y_train)), FLAGS.batch_size, FLAGS.num_epochs)
                     # Training loop. For each batch...
@@ -540,7 +541,7 @@ for o in range(0,5):
                         current_step = tf.train.global_step(sess, global_step)
                         if current_step % FLAGS.evaluate_every == 0:
                             # print("\nEvaluation:")
-                            dev_step(x_dev, y_dev, writer=dev_summary_writer)
+                            dev_step(x_test, y_test, writer=dev_summary_writer)
 
                         if current_step % FLAGS.checkpoint_every == 0:
                             path = saver.save(sess, checkpoint_prefix, global_step=current_step)
