@@ -132,8 +132,7 @@ for o in range(0,5):
             shuffle_indices = np.random.permutation(np.arange(len(y_t)))
             x_train = x_t[shuffle_indices]
             y_train = y_t[shuffle_indices]
-            print("The count of positive labels in train after nothing: %s", len(list_positive_instances))
-            print("The count of negative labels in train after nothing: %s", len(list_negative_instances))
+            Print("Checking length of x_train {}".format(len(x_train)))
 
         if(t==1):
             #undersample
@@ -208,6 +207,7 @@ for o in range(0,5):
 
         y_test = np_dev_y
         x_test = np_dev_x
+        Print("Checking length of y_test{}".format(len(y_test)))
         if ((t==1)or(t==2)):
             for p in range(0,number_of_classifiers):
                 rand_seed = randint(0, 9)
@@ -537,6 +537,7 @@ for o in range(0,5):
             vocab_path = os.path.join(checkpoint_dir_for_eval, "..", "vocab")
             vocab_processor = learn.preprocessing.VocabularyProcessor.restore(vocab_path)
             y_test = np.argmax(y_test, axis=1)
+
             #
             print("\nEvaluating...\n")
             #
