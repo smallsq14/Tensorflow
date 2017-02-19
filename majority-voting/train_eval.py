@@ -60,8 +60,8 @@ for o in range(0,5):
     # Build vocabulary
     max_document_length = max([len(x.split(" ")) for x in x_text])
     vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
-    x = np.array(list(vocab_processor.fit_transform(x_text)))
-
+    #x = np.array(list(vocab_processor.fit_transform(x_text)))
+    x = np.array(list(x_text))
     # Randomly shuffle data
     np.random.seed(random_seed)
     shuffle_indices = np.random.permutation(np.arange(len(y)))
@@ -91,6 +91,7 @@ for o in range(0,5):
     text_for_file ="4331_positive"
     imbalance_size = 500
     del list_positive_instances[500:]
+    print(list_positive_instances)
     #list_positive_instances = list_positive_instances[:-int(imbalance_size)]
     positive_test_size = round(.20 * imbalance_size)
     positive_train_size = round(imbalance_size - positive_test_size)
@@ -112,19 +113,20 @@ for o in range(0,5):
     negative_labels = [[1, 0] for _ in neg_cut_dev]
     y_dev = np.concatenate([positive_labels, negative_labels], 0)
     x_dev = np.array(neg_cut_dev + pos_cut_dev)
+    print("dev")
+    print(x_dev)
     print("Length of Cut positive test:%s", len(pos_cut_dev))
     print("Length of Cut negative test:%s", len(neg_cut_dev))
     list_positive_instances = list_positive_instances[0:int(positive_train_size)]
     list_negative_instances = list_negative_instances[0:int(negative_train_size)]
-
+    print("train")
+    print(list_positive_instances)
     print("Length of Cut positive train:%s", len(list_positive_instances))
     print("Length of Cut negative train:%s", len(list_negative_instances))
 
     print("Length of Dev X :%s", len(y_dev))
     print("Length of Dev Y :%s", len(x_dev))
 
-    np_dev_x = x_dev
-    np_dev_y = y_dev
 
     for t in range(0,3):
         run_accuracy = []
@@ -133,6 +135,8 @@ for o in range(0,5):
         all_predictions = []
         positive_labels = []
         negative_labels = []
+
+        checkpoint_dir_for_eval = ""
         if(t==0):
             #no change
             rand_seed = int(t)
@@ -222,8 +226,8 @@ for o in range(0,5):
             print("Overall Length:%s", len(y_train))
             print("Vocabulary Size: {:d}".format(len(vocab_processor.vocabulary_)))
 
-        y_test = np_dev_y
-        x_test = np_dev_x
+        y_test = dev_y
+        x_test = dev_x
         print("Checking length of y_test{}".format(len(y_test)))
         if ((t==1)or(t==2)):
             for p in range(0,number_of_classifiers):
@@ -504,7 +508,7 @@ for o in range(0,5):
                             [train_op, global_step, train_summary_op, cnn.loss, cnn.accuracy],
                             feed_dict)
                         time_str = datetime.datetime.now().isoformat()
-                        print("TRAIN {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+                        # print("TRAIN {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
                         train_summary_writer.add_summary(summaries, step)
 
 
@@ -524,7 +528,7 @@ for o in range(0,5):
                         run_accuracy.append(accuracy)
                         # print("Run Accuracy List:")
                         print(run_accuracy)
-                        print("DEV {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+                        # print("DEV {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
 
 
                     # if writer:
@@ -540,7 +544,7 @@ for o in range(0,5):
                         train_step(x_batch, y_batch)
                         current_step = tf.train.global_step(sess, global_step)
                         if current_step % FLAGS.evaluate_every == 0:
-                            print("\nEvaluation:")
+                            # print("\nEvaluation:")
                             dev_step(x_test, y_test, writer=dev_summary_writer)
 
                         if current_step % FLAGS.checkpoint_every == 0:
