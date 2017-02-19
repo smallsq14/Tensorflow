@@ -109,8 +109,8 @@ for o in range(0,5):
     print("Length of Cut negative test:%s", len(neg_cut_dev))
     list_positive_instances = list_positive_instances[:int(positive_train_size)]
     list_negative_instances = list_negative_instances[:int(negative_train_size)]
-    print("Length of Cut positive train:%s", len(positive_labels))
-    print("Length of Cut negative train:%s", len(negative_labels))
+    print("Length of Cut positive train:%s", len(list_positive_instances))
+    print("Length of Cut negative train:%s", len(list_negative_instances))
     y_dev = np.concatenate([positive_labels, negative_labels], 0)
     x_dev = np.array(neg_cut_dev + pos_cut_dev)
     np_dev_x = x_dev
@@ -121,7 +121,8 @@ for o in range(0,5):
         x_train = []
         y_train = []
         all_predictions = []
-        positive_labels =[]
+        positive_labels = []
+        negative_labels = []
         if(t==0):
             #no change
             rand_seed = int(t)
