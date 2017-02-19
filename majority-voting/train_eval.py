@@ -90,7 +90,7 @@ for o in range(0,5):
 
     text_for_file ="4331_positive"
     imbalance_size = 500
-    del list_positive_instances[500:]
+
     #list_positive_instances = list_positive_instances[:-int(imbalance_size)]
     positive_test_size = round(.20 * imbalance_size)
     positive_train_size = round(imbalance_size - positive_test_size)
@@ -102,7 +102,7 @@ for o in range(0,5):
     print("Positive Train Size{}".format(positive_train_size))
     print("Negative Train Size{}".format(negative_train_size))
 
-    pos_cut_dev = list_positive_instances[int(positive_train_size):(int(positive_train_size)+int(positive_test_size))]
+    pos_cut_dev = list_positive_instances[-int(positive_test_size):]
     neg_cut_dev = list_negative_instances[int(negative_train_size):(int(negative_train_size)+int(negative_test_size))]
     del list_positive_instances[int(positive_train_size):(int(positive_train_size)+int(positive_test_size))]
     del list_negative_instances[int(negative_train_size):(int(negative_train_size)+int(negative_test_size))]
