@@ -90,6 +90,7 @@ for o in range(0,5):
 
     text_for_file ="4331_positive"
     imbalance_size = 500
+    list_positive_balanced = list_positive_balanced[:imbalance_size]
     positive_test_size = round(.20 * imbalance_size)
     positive_train_size = round(imbalance_size - positive_test_size)
     negative_test_size = round(.20 * len(list_negative_instances))
@@ -99,14 +100,15 @@ for o in range(0,5):
     print("Positive Train Size{}".format(positive_train_size))
     print("Negative Train Size{}".format(negative_train_size))
 
-    neg_cut_dev = list_negative_instances[-int(negative_test_size):]
-    pos_cut_dev = list_positive_instances[-int(positive_test_size):]
+
+    pos_cut_dev = list_positive_instances[int(positive_train_size):]
+    neg_cut_dev = list_negative_instances[int(negative_train_size):]
     positive_labels = [[0, 1] for _ in pos_cut_dev]
     negative_labels = [[1, 0] for _ in neg_cut_dev]
     print("Length of Cut positive test:%s", len(pos_cut_dev))
     print("Length of Cut negative test:%s", len(neg_cut_dev))
-    list_positive_instances = list_positive_instances[:-int(positive_train_size)]
-    list_negative_instances = list_negative_instances[:-int(negative_train_size)]
+    list_positive_instances = list_positive_instances[:int(positive_train_size)]
+    list_negative_instances = list_negative_instances[:int(negative_train_size)]
     print("Length of Cut positive train:%s", len(positive_labels))
     print("Length of Cut negative train:%s", len(negative_labels))
     y_dev = np.concatenate([positive_labels, negative_labels], 0)
