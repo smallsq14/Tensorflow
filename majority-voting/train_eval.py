@@ -99,7 +99,7 @@ for o in range(0,5):
     print("Positive Train Size{}".format(positive_train_size))
     print("Negative Train Size{}".format(negative_train_size))
     neg_cut_dev = list_negative_instances[int(negative_train_size)+1:]
-    pos_cut_dev = list_positive_instances[int(positive_train_size)+!:]
+    pos_cut_dev = list_positive_instances[int(positive_train_size)+1:]
     positive_labels = [[0, 1] for _ in pos_cut_dev]
     negative_labels = [[1, 0] for _ in neg_cut_dev]
     print("Length of Cut positive test:%s", len(pos_cut_dev))
