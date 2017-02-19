@@ -7,37 +7,12 @@ import time
 import datetime
 import random
 import data_helpers
-import re
-import fnmatch
-import itertools
-from collections import Counter
-
 from random import randint
 from sklearn.metrics import precision_recall_fscore_support
 from sklearn.metrics import confusion_matrix
 from text_cnn import TextCNN
 from tensorflow.contrib import learn
 
-
-def clean_str(string):
-    """
-    Tokenization/string cleaning for all datasets except for SST.
-    Original taken from https://github.com/yoonkim/CNN_sentence/blob/master/process_data.py
-    """
-    string = re.sub(r"[^A-Za-z0-9(),!?\'\`]", " ", string)
-    string = re.sub(r"\'s", " \'s", string)
-    string = re.sub(r"\'ve", " \'ve", string)
-    string = re.sub(r"n\'t", " n\'t", string)
-    string = re.sub(r"\'re", " \'re", string)
-    string = re.sub(r"\'d", " \'d", string)
-    string = re.sub(r"\'ll", " \'ll", string)
-    string = re.sub(r",", " , ", string)
-    string = re.sub(r"!", " ! ", string)
-    string = re.sub(r"\(", " \( ", string)
-    string = re.sub(r"\)", " \) ", string)
-    string = re.sub(r"\?", " \? ", string)
-    string = re.sub(r"\s{2,}", " ", string)
-    return string.strip().lower()
 
 class Classifier(object):
     def __init__(self, checkpoint=None, accuracy=None, iteration=None):
@@ -80,22 +55,20 @@ number_of_classifiers = 10
 run_accuracy = []
 for o in range(0,5):
 
-
-
-    positive_examples = list(open("./data/rt-polaritydata/rt-polarity.pos", "r").readlines())
-    positive_examples = [s.strip() for s in positive_examples]
-    negative_examples = list(open("./data/rt-polaritydata/rt-polarity.neg", "r").readlines())
-    negative_examples = [s.strip() for s in negative_examples]
-    positive_examples = positive_examples[0:500]
-
-    x_text = positive_examples + negative_examples
-    print("Length of Positive Examples:{}".format(len(positive_examples)))
-    positive_examples = [clean_str(sent) for sent in positive_examples]
-    negative_examples = [clean_str(sent) for sent in negative_examples]
+    x_text, y = data_helpers.load_data_and_labels()
 
     # Build vocabulary
     max_document_length = max([len(x.split(" ")) for x in x_text])
     vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
+    x = np.array(list(vocab_processor.fit_transform(x_text)))
+
+    # Randomly shuffle data
+    np.random.seed(random_seed)
+    shuffle_indices = np.random.permutation(np.arange(len(y)))
+
+    #x_raw_shuffled = x_text[shuffle_indices]
+    x_shuffled = x[shuffle_indices]
+    y_shuffled = y[shuffle_indices]
 
 
     classifier_list = []
@@ -105,13 +78,20 @@ for o in range(0,5):
 
     list_positive_instances = []
     list_negative_instances = []
+
+    for x in range(0, len(x_shuffled)):
+        if (y_shuffled[x] == pos_value).all():
+            # print("Positive Label")
+            list_positive_instances.append(x_shuffled[x])
+        else:
+            # print("Negative label")
+            list_negative_instances.append(x_shuffled[x])
     #final value
 
     text_for_file ="4331_positive"
     imbalance_size = 500
-    list_positive_instances = positive_examples
-    list_negative_instances = negative_examples
 
+    del list_positive_instances[0:int(imbalance_size)]
     positive_test_size = round(.20 * imbalance_size)
     positive_train_size = round(imbalance_size - positive_test_size)
     negative_test_size = round(.20 * len(list_negative_instances))
@@ -131,7 +111,7 @@ for o in range(0,5):
     positive_labels = [[0, 1] for _ in pos_cut_dev]
     negative_labels = [[1, 0] for _ in neg_cut_dev]
     y_dev = np.concatenate([positive_labels, negative_labels], 0)
-    x_dev = np.array(list(vocab_processor.fit_transform(pos_cut_dev + neg_cut_dev)))
+    x_dev = np.array(pos_cut_dev + neg_cut_dev)
     print("Length of Cut positive test:%s", len(pos_cut_dev))
     print("Length of Cut negative test:%s", len(neg_cut_dev))
     list_positive_instances = pos_cut_train
@@ -164,12 +144,141 @@ for o in range(0,5):
             print("Length of positive labels:%s", len(positive_labels))
             print("Length of negative labels:%s", len(negative_labels))
             y_t = np.concatenate([positive_labels, negative_labels], 0)
-            x_t = np.array(list(vocab_processor.fit_transform(list_positive_instances + list_negative_instances)))
+            x_t = np.array(list_positive_instances + list_negative_instances)
             np.random.seed(rand_seed)
             shuffle_indices = np.random.permutation(np.arange(len(y_t)))
             x_train = x_t[shuffle_indices]
             y_train = y_t[shuffle_indices]
             print("Checking length of x_train {}".format(len(x_train)))
+            print("Checking length of x_train {}".format(len(x_train)))
+            print("Checking length of y_dev {}".format(len(y_dev)))
+            with tf.Graph().as_default():
+                session_conf = tf.ConfigProto(
+                    allow_soft_placement=FLAGS.allow_soft_placement,
+                    log_device_placement=FLAGS.log_device_placement)
+                sess = tf.Session(config=session_conf)
+                with sess.as_default():
+                    cnn = TextCNN(
+                        sequence_length=x_train.shape[1],
+                        num_classes=2,
+                        vocab_size=len(vocab_processor.vocabulary_),
+                        embedding_size=FLAGS.embedding_dim,
+                        filter_sizes=list(map(int, FLAGS.filter_sizes.split(","))),
+                        num_filters=FLAGS.num_filters,
+                        l2_reg_lambda=FLAGS.l2_reg_lambda)
+
+                    # Define Training procedure
+                    global_step = tf.Variable(0, name="global_step", trainable=False)
+                    optimizer = tf.train.AdamOptimizer(1e-3)
+                    grads_and_vars = optimizer.compute_gradients(cnn.loss)
+                    train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
+
+                    # Keep track of gradient values and sparsity (optional)
+                    grad_summaries = []
+                    for g, v in grads_and_vars:
+                        if g is not None:
+                            grad_hist_summary = tf.histogram_summary("{}/grad/hist".format(v.name), g)
+                            sparsity_summary = tf.scalar_summary("{}/grad/sparsity".format(v.name),
+                                                                 tf.nn.zero_fraction(g))
+                            grad_summaries.append(grad_hist_summary)
+                            grad_summaries.append(sparsity_summary)
+                    grad_summaries_merged = tf.merge_summary(grad_summaries)
+
+                    # Output directory for models and summaries
+                    timestamp = str(int(time.time()))
+                    out_dir = os.path.abspath(os.path.join(os.path.curdir, "runs", timestamp))
+                    print("Writing to {}\n".format(out_dir))
+
+                    # Summaries for loss and accuracy
+                    loss_summary = tf.scalar_summary("loss", cnn.loss)
+                    acc_summary = tf.scalar_summary("accuracy", cnn.accuracy)
+
+                    # Train Summaries
+                    train_summary_op = tf.merge_summary([loss_summary, acc_summary, grad_summaries_merged])
+                    train_summary_dir = os.path.join(out_dir, "summaries", "train")
+                    train_summary_writer = tf.train.SummaryWriter(train_summary_dir, sess.graph)
+
+                    # Dev summaries
+                    dev_summary_op = tf.merge_summary([loss_summary, acc_summary])
+                    dev_summary_dir = os.path.join(out_dir, "summaries", "dev")
+                    dev_summary_writer = tf.train.SummaryWriter(dev_summary_dir, sess.graph)
+
+                    # Checkpoint directory. Tensorflow assumes this directory already exists so we need to create it
+                    checkpoint_dir = os.path.abspath(os.path.join(out_dir, "checkpoints"))
+                    checkpoint_dir_for_eval = checkpoint_dir
+                    checkpoint_prefix = os.path.join(checkpoint_dir, "model")
+                    if not os.path.exists(checkpoint_dir):
+                        os.makedirs(checkpoint_dir)
+                    saver = tf.train.Saver(tf.all_variables())
+
+                    print(" 1 Checkpoint Dir is {}".format(out_dir))
+
+                    # Write vocabulary
+                    vocab_processor.save(os.path.join(out_dir, "vocab"))
+
+                    # Initialize all variables
+                    sess.run(tf.initialize_all_variables())
+
+
+                    def train_step(x_batch, y_batch):
+                        """
+                        A single training step
+                        """
+                        feed_dict = {
+                            cnn.input_x: x_batch,
+                            cnn.input_y: y_batch,
+                            cnn.dropout_keep_prob: FLAGS.dropout_keep_prob
+                        }
+                        _, step, summaries, loss, accuracy = sess.run(
+                            [train_op, global_step, train_summary_op, cnn.loss, cnn.accuracy],
+                            feed_dict)
+                        time_str = datetime.datetime.now().isoformat()
+                        # print("TRAIN {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+                        train_summary_writer.add_summary(summaries, step)
+
+
+                    def dev_step(x_batch, y_batch, writer=None):
+                        """
+                        Evaluates model on a dev set
+                        """
+                        feed_dict = {
+                            cnn.input_x: x_batch,
+                            cnn.input_y: y_batch,
+                            cnn.dropout_keep_prob: 1.0
+                        }
+                        step, summaries, loss, accuracy = sess.run(
+                            [global_step, dev_summary_op, cnn.loss, cnn.accuracy],
+                            feed_dict)
+                        time_str = datetime.datetime.now().isoformat()
+                        run_accuracy.append(accuracy)
+                        # print("Run Accuracy List:")
+                        print(run_accuracy)
+                        # print("DEV {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+
+
+                    # if writer:
+                    #        writer.add_summary(summaries, step)
+
+                    # Generate batches
+                    print("Length of Train {}".format(len(x_train)))
+                    batches = data_helpers.batch_iter(
+                        list(zip(x_train, y_train)), FLAGS.batch_size, FLAGS.num_epochs)
+                    # Training loop. For each batch...
+                    for batch in batches:
+                        x_batch, y_batch = zip(*batch)
+                        train_step(x_batch, y_batch)
+                        current_step = tf.train.global_step(sess, global_step)
+                        if current_step % FLAGS.evaluate_every == 0:
+                            # print("\nEvaluation:")
+                            dev_step(x_test, y_test, writer=dev_summary_writer)
+
+                        if current_step % FLAGS.checkpoint_every == 0:
+                            path = saver.save(sess, checkpoint_prefix, global_step=current_step)
+                            # print("Saved model checkpoint to {}\n".format(path))
+                            # classifier_list.append(
+                            # Classifier(checkpoint=checkpoint_dir, accuracy=run_accuracy[len(run_accuracy) - 1],
+                            # iteration=p))
+                            # print("The Final Accuracy is {}".format(run_accuracy))
 
         if(t==1):
             #undersample
@@ -441,136 +550,7 @@ for o in range(0,5):
                     print(confusion_matrix(y_test, all_predictions))
                     print(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
         else:
-            print("Checking length of x_train {}".format(len(x_train)))
-            print("Checking length of y_dev {}".format(len(y_dev)))
-            with tf.Graph().as_default():
-                session_conf = tf.ConfigProto(
-                    allow_soft_placement=FLAGS.allow_soft_placement,
-                    log_device_placement=FLAGS.log_device_placement)
-                sess = tf.Session(config=session_conf)
-                with sess.as_default():
-                    cnn = TextCNN(
-                        sequence_length=x_train.shape[1],
-                        num_classes=2,
-                        vocab_size=len(vocab_processor.vocabulary_),
-                        embedding_size=FLAGS.embedding_dim,
-                        filter_sizes=list(map(int, FLAGS.filter_sizes.split(","))),
-                        num_filters=FLAGS.num_filters,
-                        l2_reg_lambda=FLAGS.l2_reg_lambda)
-
-                    # Define Training procedure
-                    global_step = tf.Variable(0, name="global_step", trainable=False)
-                    optimizer = tf.train.AdamOptimizer(1e-3)
-                    grads_and_vars = optimizer.compute_gradients(cnn.loss)
-                    train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
-
-                    # Keep track of gradient values and sparsity (optional)
-                    grad_summaries = []
-                    for g, v in grads_and_vars:
-                        if g is not None:
-                            grad_hist_summary = tf.histogram_summary("{}/grad/hist".format(v.name), g)
-                            sparsity_summary = tf.scalar_summary("{}/grad/sparsity".format(v.name),
-                                                                 tf.nn.zero_fraction(g))
-                            grad_summaries.append(grad_hist_summary)
-                            grad_summaries.append(sparsity_summary)
-                    grad_summaries_merged = tf.merge_summary(grad_summaries)
-
-                    # Output directory for models and summaries
-                    timestamp = str(int(time.time()))
-                    out_dir = os.path.abspath(os.path.join(os.path.curdir, "runs", timestamp))
-                    print("Writing to {}\n".format(out_dir))
-
-                    # Summaries for loss and accuracy
-                    loss_summary = tf.scalar_summary("loss", cnn.loss)
-                    acc_summary = tf.scalar_summary("accuracy", cnn.accuracy)
-
-                    # Train Summaries
-                    train_summary_op = tf.merge_summary([loss_summary, acc_summary, grad_summaries_merged])
-                    train_summary_dir = os.path.join(out_dir, "summaries", "train")
-                    train_summary_writer = tf.train.SummaryWriter(train_summary_dir, sess.graph)
-
-                    # Dev summaries
-                    dev_summary_op = tf.merge_summary([loss_summary, acc_summary])
-                    dev_summary_dir = os.path.join(out_dir, "summaries", "dev")
-                    dev_summary_writer = tf.train.SummaryWriter(dev_summary_dir, sess.graph)
-
-                    # Checkpoint directory. Tensorflow assumes this directory already exists so we need to create it
-                    checkpoint_dir = os.path.abspath(os.path.join(out_dir, "checkpoints"))
-                    checkpoint_dir_for_eval = checkpoint_dir
-                    checkpoint_prefix = os.path.join(checkpoint_dir, "model")
-                    if not os.path.exists(checkpoint_dir):
-                        os.makedirs(checkpoint_dir)
-                    saver = tf.train.Saver(tf.all_variables())
-
-                    print(" 1 Checkpoint Dir is {}".format(out_dir))
-
-                    # Write vocabulary
-                    vocab_processor.save(os.path.join(out_dir, "vocab"))
-
-                    # Initialize all variables
-                    sess.run(tf.initialize_all_variables())
-
-
-                    def train_step(x_batch, y_batch):
-                        """
-                        A single training step
-                        """
-                        feed_dict = {
-                            cnn.input_x: x_batch,
-                            cnn.input_y: y_batch,
-                            cnn.dropout_keep_prob: FLAGS.dropout_keep_prob
-                        }
-                        _, step, summaries, loss, accuracy = sess.run(
-                            [train_op, global_step, train_summary_op, cnn.loss, cnn.accuracy],
-                            feed_dict)
-                        time_str = datetime.datetime.now().isoformat()
-                        # print("TRAIN {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
-                        train_summary_writer.add_summary(summaries, step)
-
-
-                    def dev_step(x_batch, y_batch, writer=None):
-                        """
-                        Evaluates model on a dev set
-                        """
-                        feed_dict = {
-                            cnn.input_x: x_batch,
-                            cnn.input_y: y_batch,
-                            cnn.dropout_keep_prob: 1.0
-                        }
-                        step, summaries, loss, accuracy = sess.run(
-                            [global_step, dev_summary_op, cnn.loss, cnn.accuracy],
-                            feed_dict)
-                        time_str = datetime.datetime.now().isoformat()
-                        run_accuracy.append(accuracy)
-                        # print("Run Accuracy List:")
-                        print(run_accuracy)
-                        print("DEV {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
-
-
-                    # if writer:
-                    #        writer.add_summary(summaries, step)
-
-                    # Generate batches
-                    print("Length of Train {}".format(len(x_train)))
-                    batches = data_helpers.batch_iter(
-                        list(zip(x_train, y_train)), FLAGS.batch_size, FLAGS.num_epochs)
-                    # Training loop. For each batch...
-                    for batch in batches:
-                        x_batch, y_batch = zip(*batch)
-                        train_step(x_batch, y_batch)
-                        current_step = tf.train.global_step(sess, global_step)
-                        if current_step % FLAGS.evaluate_every == 0:
-                            # print("\nEvaluation:")
-                            dev_step(x_test, y_test, writer=dev_summary_writer)
-
-                        if current_step % FLAGS.checkpoint_every == 0:
-                            path = saver.save(sess, checkpoint_prefix, global_step=current_step)
-                            # print("Saved model checkpoint to {}\n".format(path))
-                    #classifier_list.append(
-                        #Classifier(checkpoint=checkpoint_dir, accuracy=run_accuracy[len(run_accuracy) - 1],
-                                  # iteration=p))
-                    # print("The Final Accuracy is {}".format(run_accuracy))
-
+            print("check")
         print("***************************************")
         print("***********Results Method " +str(t)+" *********************")
         if (t==0):
