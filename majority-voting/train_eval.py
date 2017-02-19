@@ -524,7 +524,7 @@ for o in range(0,5):
                         run_accuracy.append(accuracy)
                         # print("Run Accuracy List:")
                         print(run_accuracy)
-                        # print("DEV {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+                        print("DEV {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
 
 
                     # if writer:
