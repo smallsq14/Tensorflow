@@ -111,6 +111,9 @@ for o in range(0,5):
     print("Length of Cut negative train:%s", len(list_negative_instances))
     y_dev = np.concatenate([positive_labels, negative_labels], 0)
     x_dev = np.array(neg_cut_dev + pos_cut_dev)
+    print("Length of Dev X :%s", len(y_dev))
+    print("Length of Dev Y :%s", len(x_dev))
+
     np_dev_x = x_dev
     np_dev_y = y_dev
 
