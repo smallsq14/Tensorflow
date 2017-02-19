@@ -91,7 +91,7 @@ for o in range(0,5):
     text_for_file ="4331_positive"
     imbalance_size = 500
 
-    #list_positive_instances = list_positive_instances[:-int(imbalance_size)]
+    list_positive_instances = list_positive_instances[:-int(imbalance_size)]
     positive_test_size = round(.20 * imbalance_size)
     positive_train_size = round(imbalance_size - positive_test_size)
     negative_test_size = round(.20 * len(list_negative_instances))
@@ -103,8 +103,8 @@ for o in range(0,5):
     print("Negative Train Size{}".format(negative_train_size))
     print("Length of positive instances:%s", len(list_positive_instances))
     print("Length of negative instances:%s", len(list_negative_instances))
-    pos_cut_dev = list_positive_instances[-int(positive_test_size):]
-    neg_cut_dev = list_negative_instances[-int(negative_test_size):]
+    pos_cut_dev,pos_cut_train = list_positive_instances[-int(positive_test_size):],list_positive_instances[:-int(positive_test_size)]
+    neg_cut_dev,neg_cut_train = list_negative_instances[-int(negative_test_size):],list_negative_instances[:-int(negative_test_size)]
 
     print("Length of Cut positive dev:%s", len(pos_cut_dev))
     print("Length of Cut negative dev:%s", len(neg_cut_dev))
@@ -114,8 +114,8 @@ for o in range(0,5):
     x_dev = np.array(pos_cut_dev + neg_cut_dev)
     print("Length of Cut positive test:%s", len(pos_cut_dev))
     print("Length of Cut negative test:%s", len(neg_cut_dev))
-    list_positive_instances = list_positive_instances[0:int(positive_train_size)]
-    list_negative_instances = list_negative_instances[0:int(negative_train_size)]
+    list_positive_instances = pos_cut_train
+    list_negative_instances = neg_cut_train
 
     print("Length of Cut positive train:%s", len(list_positive_instances))
     print("Length of Cut negative train:%s", len(list_negative_instances))
@@ -135,7 +135,7 @@ for o in range(0,5):
         checkpoint_dir_for_eval = ""
         if(t==0):
             #no change
-            rand_seed = int(t)
+            rand_seed = int(5)
             print("running Method A")
             print("positive labels should be empty:{}".format(len(positive_labels)))
             print("negative labels should be empty:{}".format(len(negative_labels)))
