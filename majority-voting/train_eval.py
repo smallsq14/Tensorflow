@@ -91,7 +91,7 @@ for o in range(0,5):
     text_for_file ="4331_positive"
     imbalance_size = 500
 
-    list_positive_instances = list_positive_instances[:-int(imbalance_size)]
+    del list_positive_instances[:int(imbalance_size)]
     positive_test_size = round(.20 * imbalance_size)
     positive_train_size = round(imbalance_size - positive_test_size)
     negative_test_size = round(.20 * len(list_negative_instances))
