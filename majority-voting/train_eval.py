@@ -412,6 +412,8 @@ for o in range(0,5):
                     print(confusion_matrix(y_test, all_predictions))
                     print(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
         else:
+            print("Checking length of x_train {}".format(len(x_train)))
+            print("Checking length of y_dev {}".format(len(y_dev)))
             with tf.Graph().as_default():
                 session_conf = tf.ConfigProto(
                     allow_soft_placement=FLAGS.allow_soft_placement,
