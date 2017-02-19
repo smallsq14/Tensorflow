@@ -482,7 +482,7 @@ for o in range(0,5):
                         os.makedirs(checkpoint_dir)
                     saver = tf.train.Saver(tf.all_variables())
 
-                    print("Checkpoint Dir is {}".format(out_dir))
+                    print(" 1 Checkpoint Dir is {}".format(out_dir))
 
                     # Write vocabulary
                     vocab_processor.save(os.path.join(out_dir, "vocab"))
@@ -504,7 +504,7 @@ for o in range(0,5):
                             [train_op, global_step, train_summary_op, cnn.loss, cnn.accuracy],
                             feed_dict)
                         time_str = datetime.datetime.now().isoformat()
-                        # print("TRAIN {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+                        print("TRAIN {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
                         train_summary_writer.add_summary(summaries, step)
 
 
@@ -524,7 +524,7 @@ for o in range(0,5):
                         run_accuracy.append(accuracy)
                         # print("Run Accuracy List:")
                         print(run_accuracy)
-                        # print("DEV {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+                        print("DEV {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
 
 
                     # if writer:
@@ -540,7 +540,7 @@ for o in range(0,5):
                         train_step(x_batch, y_batch)
                         current_step = tf.train.global_step(sess, global_step)
                         if current_step % FLAGS.evaluate_every == 0:
-                            # print("\nEvaluation:")
+                            print("\nEvaluation:")
                             dev_step(x_test, y_test, writer=dev_summary_writer)
 
                         if current_step % FLAGS.checkpoint_every == 0:
