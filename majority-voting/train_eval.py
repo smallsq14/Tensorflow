@@ -132,7 +132,7 @@ for o in range(0,5):
             shuffle_indices = np.random.permutation(np.arange(len(y_t)))
             x_train = x_t[shuffle_indices]
             y_train = y_t[shuffle_indices]
-            Print("Checking length of x_train {}".format(len(x_train)))
+            print("Checking length of x_train {}".format(len(x_train)))
 
         if(t==1):
             #undersample
@@ -207,7 +207,7 @@ for o in range(0,5):
 
         y_test = np_dev_y
         x_test = np_dev_x
-        Print("Checking length of y_test{}".format(len(y_test)))
+        print("Checking length of y_test{}".format(len(y_test)))
         if ((t==1)or(t==2)):
             for p in range(0,number_of_classifiers):
                 rand_seed = randint(0, 9)
