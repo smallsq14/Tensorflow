@@ -246,7 +246,7 @@ for o in range(0,5):
                             [train_op, global_step, train_summary_op, cnn.loss, cnn.accuracy],
                             feed_dict)
                         time_str = datetime.datetime.now().isoformat()
-                        print("{}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+                        #print("{}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
                         train_summary_writer.add_summary(summaries, step)
 
 
@@ -263,7 +263,7 @@ for o in range(0,5):
                             [global_step, dev_summary_op, cnn.loss, cnn.accuracy],
                             feed_dict)
                         time_str = datetime.datetime.now().isoformat()
-                        print("{}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+                        #print("{}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
 
 
                     # Generate batches
@@ -613,7 +613,7 @@ for o in range(0,5):
                 print("Precision, Recall, Fscore")
                 print(confusion_matrix(y_test, all_predictions))
                 print(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
-                outfile = open('rus_10_method' + str(t) + '_run' + str(o) + ' classifier' + str(text_for_file) + '.txt',
+                outfile = open('rus_10_method_' + str(t) + '_run' + str(o) + ' classifier.txt',
                                'w')
                 outfile.write("\nTotal number of test examples: {}".format(len(y_test)))
                 outfile.write("\nAll predictions {}".format(len(all_predictions)))
@@ -670,7 +670,7 @@ for o in range(0,5):
             print("Precision, Recall, Fscore")
             print(confusion_matrix(y_test, all_predictions))
             print(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
-            outfile = open('rus_10_method'+str(t) + '_run' + str(o)+ 'classifier'+str(text_for_file)+'.txt','w')
+            outfile = open('rus_10_method_'+str(t) + '_run' + str(o)+ 'classifier.txt','w')
             outfile.write("\nTotal number of test examples: {}".format(len(y_test)))
             outfile.write("\nAll predictions {}".format(len(all_predictions)))
             outfile.write("\ny test: {}".format(len(y_test)))
