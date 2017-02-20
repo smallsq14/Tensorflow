@@ -155,16 +155,16 @@ for o in range(0,5):
             print("running Method A")
             print("positive labels should be empty:{}".format(len(positive_labels)))
             print("negative labels should be empty:{}".format(len(negative_labels)))
-            positive_labels = [[0, 1] for _ in list_positive_instances]
-            negative_labels = [[1, 0] for _ in list_negative_instances]
-            print("Length of positive labels:%s", len(positive_labels))
-            print("Length of negative labels:%s", len(negative_labels))
-            y_t = np.concatenate([positive_labels, negative_labels], 0)
-            x_t = np.array(list_positive_instances + list_negative_instances)
+            pos_labels = [[0, 1] for _ in list_positive_instances]
+            neg_labels = [[1, 0] for _ in list_negative_instances]
+            print("Length of positive labels:%s", len(pos_labels))
+            print("Length of negative labels:%s", len(neg_labels))
+            y_t0 = np.concatenate([pos_labels, neg_labels], 0)
+            x_t0 = np.array(list_positive_instances + list_negative_instances)
             np.random.seed(rand_seed)
             shuffle_indices = np.random.permutation(np.arange(len(y_t)))
-            x_train = x_t[shuffle_indices]
-            y_train = y_t[shuffle_indices]
+            x_train = x_t0[shuffle_indices]
+            y_train = y_t0[shuffle_indices]
             print("Checking length of x_train {}".format(len(x_train)))
             print("Checking length of y_dev {}".format(len(y_dev)))
             with tf.Graph().as_default():
