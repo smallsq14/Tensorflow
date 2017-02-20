@@ -78,21 +78,8 @@ for o in range(0,5):
 
     list_positive_instances = []
     list_negative_instances = []
-
-    for x in range(0, len(x_shuffled)):
-        if (y_shuffled[x] == pos_value).all():
-            # print("Positive Label")
-            list_positive_instances.append(x_shuffled[x])
-        else:
-            # print("Negative label")
-            list_negative_instances.append(x_shuffled[x])
-    #final value
-
-    text_for_file ="4331_positive"
     imbalance_size = 500
-
-    del list_positive_instances[int(imbalance_size):]
-    print("Size of Positive Instances{}".format(len(list_positive_instances)))
+    #print("Size of Positive Instances{}".format(len(list_positive_instances)))
     positive_test_size = round(.20 * imbalance_size)
     positive_train_size = round(imbalance_size - positive_test_size)
     negative_test_size = round(.20 * len(list_negative_instances))
@@ -102,6 +89,37 @@ for o in range(0,5):
     print("Negative Test Size{}".format(negative_test_size))
     print("Positive Train Size{}".format(positive_train_size))
     print("Negative Train Size{}".format(negative_train_size))
+
+    list_pos_train_instances = []
+    list_neg_train_instances = []
+    list_pos_dev_instances = []
+    list_neg_dev_instances = []
+    pos_counter = 0
+    neg_counter = 0
+    for x in range(0, len(x_shuffled)):
+        if (y_shuffled[x] == pos_value).all():
+            if(pos_counter<positive_test_size):
+                list_pos_dev_instances.append(x_shuffled[x])
+                pos_counter = pos_counter + 1
+            else:
+                list_pos_train_instances.append(x_shuffled[x])
+        else:
+            if(neg_counter<negative_test_size):
+                list_neg_test.append(x_shuffled[x])
+                neg_counter = neg_counter + 1
+            else:
+                list_neg_train_instances.append(x_shuffled[x])
+    #final value
+    print("New Positive Test Size{}".format(list_pos_dev_instances))
+    print("New Negative Test Size{}".format(list_neg_dev_instances))
+    print("New Positive Train Size{}".format(list_pos_train_instances))
+    print("New Negative Train Size{}".format(list_neg_train_instances))
+
+    text_for_file ="4331_positive"
+
+
+
+
     print("Length of positive instances:%s", len(list_positive_instances))
     print("Length of negative instances:%s", len(list_negative_instances))
     pos_cut_dev,pos_cut_train = list_positive_instances[-int(positive_test_size):],list_positive_instances[:-int(positive_test_size)]
