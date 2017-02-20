@@ -123,8 +123,8 @@ for o in range(0,5):
     n_labels = [[1, 0] for _ in list_neg_dev_instances]
     y_dev = np.concatenate([p_labels, n_labels], 0)
     x_dev = np.array(list_pos_dev_instances + list_neg_dev_instances)
-    print("Length of Cut positive test:%s", len(pos_cut_dev))
-    print("Length of Cut negative test:%s", len(neg_cut_dev))
+    print("Length of Cut positive test:%s", len(list_pos_dev_instances))
+    print("Length of Cut negative test:%s", len(list_neg_dev_instances))
     list_positive_instances = list_pos_train_instances
     list_negative_instances = list_neg_train_instances
 
