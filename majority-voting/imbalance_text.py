@@ -123,8 +123,8 @@ print("Length of Cut positive dev:%s", len(list_pos_dev_instances))
 print("Length of Cut negative dev:%s", len(list_neg_dev_instances))
 p_labels = [[0, 1] for _ in list_pos_dev_instances]
 n_labels = [[1, 0] for _ in list_neg_dev_instances]
-y_dev = np.concatenate([p_labels, n_labels], 0)
-x_dev = np.array(list_pos_dev_instances + list_neg_dev_instances)
+y_test = np.concatenate([p_labels, n_labels], 0)
+x_test = np.array(list_pos_dev_instances + list_neg_dev_instances)
 print("Length of Cut positive test:%s", len(list_pos_dev_instances))
 print("Length of Cut negative test:%s", len(list_neg_dev_instances))
 list_positive_instances = list_pos_train_instances
@@ -133,8 +133,7 @@ list_negative_instances = list_neg_train_instances
 print("Length of Cut positive train:%s", len(list_positive_instances))
 print("Length of Cut negative train:%s", len(list_negative_instances))
 
-print("Length of Dev X :%s", len(y_dev))
-print("Length of Dev Y :%s", len(x_dev))
+
 
 
 
@@ -148,8 +147,7 @@ negative_labels = []
 checkpoint_dir_for_eval = ""
 
             #no change
-y_test = y_dev
-x_test = x_dev
+
 rand_seed = int(5)
 print("running Method A")
 print("positive labels should be empty:{}".format(len(positive_labels)))
@@ -161,11 +159,11 @@ print("Length of negative labels:%s", len(neg_labels))
 y_t0 = np.concatenate([pos_labels, neg_labels], 0)
 x_t0 = np.array(list_positive_instances + list_negative_instances)
 np.random.seed(rand_seed)
-shuffle_indices = np.random.permutation(np.arange(len(y_t)))
+shuffle_indices = np.random.permutation(np.arange(len(y_t0)))
 x_train = x_t0[shuffle_indices]
 y_train = y_t0[shuffle_indices]
 print("Checking length of x_train {}".format(len(x_train)))
-print("Checking length of y_dev {}".format(len(y_dev)))
+
 with tf.Graph().as_default():
     session_conf = tf.ConfigProto(
     allow_soft_placement=FLAGS.allow_soft_placement,
