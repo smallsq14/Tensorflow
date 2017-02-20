@@ -105,7 +105,7 @@ for o in range(0,5):
                 list_pos_train_instances.append(x_shuffled[x])
         else:
             if(neg_counter<negative_test_size):
-                list_neg_test.append(x_shuffled[x])
+                list_neg_dev_instances.append(x_shuffled[x])
                 neg_counter = neg_counter + 1
             else:
                 list_neg_train_instances.append(x_shuffled[x])
@@ -115,26 +115,18 @@ for o in range(0,5):
     print("New Positive Train Size{}".format(len(list_pos_train_instances)))
     print("New Negative Train Size{}".format(len(list_neg_train_instances)))
 
-    text_for_file ="4331_positive"
 
 
-
-
-    print("Length of positive instances:%s", len(list_positive_instances))
-    print("Length of negative instances:%s", len(list_negative_instances))
-    pos_cut_dev,pos_cut_train = list_positive_instances[-int(positive_test_size):],list_positive_instances[:-int(positive_test_size)]
-    neg_cut_dev,neg_cut_train = list_negative_instances[-int(negative_test_size):],list_negative_instances[:-int(negative_test_size)]
-
-    print("Length of Cut positive dev:%s", len(pos_cut_dev))
-    print("Length of Cut negative dev:%s", len(neg_cut_dev))
-    positive_labels = [[0, 1] for _ in pos_cut_dev]
-    negative_labels = [[1, 0] for _ in neg_cut_dev]
-    y_dev = np.concatenate([positive_labels, negative_labels], 0)
-    x_dev = np.array(pos_cut_dev + neg_cut_dev)
+    print("Length of Cut positive dev:%s", len(list_pos_dev_instances))
+    print("Length of Cut negative dev:%s", len(list_neg_dev_instances))
+    p_labels = [[0, 1] for _ in list_pos_dev_instances]
+    n_labels = [[1, 0] for _ in list_neg_dev_instances]
+    y_dev = np.concatenate([p_labels, n_labels], 0)
+    x_dev = np.array(list_pos_dev_instances + list_neg_dev_instances)
     print("Length of Cut positive test:%s", len(pos_cut_dev))
     print("Length of Cut negative test:%s", len(neg_cut_dev))
-    list_positive_instances = pos_cut_train
-    list_negative_instances = neg_cut_train
+    list_positive_instances = list_pos_train_instances
+    list_negative_instances = list_neg_train_instances
 
     print("Length of Cut positive train:%s", len(list_positive_instances))
     print("Length of Cut negative train:%s", len(list_negative_instances))
