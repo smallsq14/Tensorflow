@@ -252,9 +252,6 @@ for o in range(0,5):
                         print("{}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
 
 
-                    if writer:
-                        writer.add_summary(summaries, step)
-
                     # Generate batches
                     batches = data_helpers.batch_iter(
                         list(zip(x_train, y_train)), FLAGS.batch_size, FLAGS.num_epochs)
