@@ -162,7 +162,7 @@ for o in range(0,5):
             y_t0 = np.concatenate([pos_labels, neg_labels], 0)
             x_t0 = np.array(list_positive_instances + list_negative_instances)
             np.random.seed(rand_seed)
-            shuffle_indices = np.random.permutation(np.arange(len(y_t)))
+            shuffle_indices = np.random.permutation(np.arange(len(y_t0)))
             x_train = x_t0[shuffle_indices]
             y_train = y_t0[shuffle_indices]
             print("Checking length of x_train {}".format(len(x_train)))
