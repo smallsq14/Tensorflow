@@ -126,6 +126,7 @@ for o in range(0,5):
     n_labels = [[1, 0] for _ in list_neg_dev_instances]
     y_dev = np.concatenate([p_labels, n_labels], 0)
     x_dev = np.array(list_pos_dev_instances + list_neg_dev_instances)
+
     print("Length of Cut positive test:%s", len(list_pos_dev_instances))
     print("Length of Cut negative test:%s", len(list_neg_dev_instances))
     list_positive_instances = list_pos_train_instances
@@ -484,8 +485,8 @@ for o in range(0,5):
 
 
 
-                y_test = np_dev_y
-                x_test = np_dev_x
+                y_test = y_dev
+                x_test = x_dev
                 #
                 # Map data into vocabulary
                 vocab_path = os.path.join(checkpoint_dir_for_eval, "..", "vocab")
