@@ -105,7 +105,7 @@ for o in range(0,5):
             else:
                 if(pos_second_counter<positive_train_size):
                     list_pos_train_instances.append(x_shuffled[x])
-                    pos_second_counter = pos_second_count + 1
+                    pos_second_counter = pos_second_counter + 1
         else:
             if(neg_counter<negative_test_size):
                 list_neg_dev_instances.append(x_shuffled[x])
