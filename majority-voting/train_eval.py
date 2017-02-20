@@ -95,6 +95,7 @@ for o in range(0,5):
     list_pos_dev_instances = []
     list_neg_dev_instances = []
     pos_counter = 0
+    pos_second_counter = 0
     neg_counter = 0
     for x in range(0, len(x_shuffled)):
         if (y_shuffled[x] == pos_value).all():
@@ -102,7 +103,9 @@ for o in range(0,5):
                 list_pos_dev_instances.append(x_shuffled[x])
                 pos_counter = pos_counter + 1
             else:
-                list_pos_train_instances.append(x_shuffled[x])
+                if(pos_second_counter<positive_train_size):
+                    list_pos_train_instances.append(x_shuffled[x])
+                    pos_second_counter = pos_second_count + 1
         else:
             if(neg_counter<negative_test_size):
                 list_neg_dev_instances.append(x_shuffled[x])
