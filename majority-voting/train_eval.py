@@ -92,6 +92,7 @@ for o in range(0,5):
     imbalance_size = 500
 
     del list_positive_instances[int(imbalance_size):]
+    print("Size of Positive Instances{}".format(len(list_positive_instances)))
     positive_test_size = round(.20 * imbalance_size)
     positive_train_size = round(imbalance_size - positive_test_size)
     negative_test_size = round(.20 * len(list_negative_instances))
@@ -152,7 +153,6 @@ for o in range(0,5):
             x_train = x_t[shuffle_indices]
             y_train = y_t[shuffle_indices]
             print("Checking length of x_train {}".format(len(x_train)))
-            print("Checking length of x_train {}".format(len(x_train)))
             print("Checking length of y_dev {}".format(len(y_dev)))
             with tf.Graph().as_default():
                 session_conf = tf.ConfigProto(
@@ -207,13 +207,10 @@ for o in range(0,5):
 
                     # Checkpoint directory. Tensorflow assumes this directory already exists so we need to create it
                     checkpoint_dir = os.path.abspath(os.path.join(out_dir, "checkpoints"))
-                    checkpoint_dir_for_eval = checkpoint_dir
                     checkpoint_prefix = os.path.join(checkpoint_dir, "model")
                     if not os.path.exists(checkpoint_dir):
                         os.makedirs(checkpoint_dir)
                     saver = tf.train.Saver(tf.all_variables())
-
-                    print(" 1 Checkpoint Dir is {}".format(out_dir))
 
                     # Write vocabulary
                     vocab_processor.save(os.path.join(out_dir, "vocab"))
@@ -235,7 +232,7 @@ for o in range(0,5):
                             [train_op, global_step, train_summary_op, cnn.loss, cnn.accuracy],
                             feed_dict)
                         time_str = datetime.datetime.now().isoformat()
-                        # print("TRAIN {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+                        print("{}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
                         train_summary_writer.add_summary(summaries, step)
 
 
@@ -252,17 +249,13 @@ for o in range(0,5):
                             [global_step, dev_summary_op, cnn.loss, cnn.accuracy],
                             feed_dict)
                         time_str = datetime.datetime.now().isoformat()
-                        run_accuracy.append(accuracy)
-                        # print("Run Accuracy List:")
-                        print(run_accuracy)
-                        # print("DEV {}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
+                        print("{}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
 
 
-                    # if writer:
-                    #        writer.add_summary(summaries, step)
+                    if writer:
+                        writer.add_summary(summaries, step)
 
                     # Generate batches
-                    print("Length of Train {}".format(len(x_train)))
                     batches = data_helpers.batch_iter(
                         list(zip(x_train, y_train)), FLAGS.batch_size, FLAGS.num_epochs)
                     # Training loop. For each batch...
@@ -271,16 +264,12 @@ for o in range(0,5):
                         train_step(x_batch, y_batch)
                         current_step = tf.train.global_step(sess, global_step)
                         if current_step % FLAGS.evaluate_every == 0:
-                            # print("\nEvaluation:")
+                            print("\nEvaluation:")
                             dev_step(x_test, y_test, writer=dev_summary_writer)
-
+                            print("")
                         if current_step % FLAGS.checkpoint_every == 0:
                             path = saver.save(sess, checkpoint_prefix, global_step=current_step)
-                            # print("Saved model checkpoint to {}\n".format(path))
-                            # classifier_list.append(
-                            # Classifier(checkpoint=checkpoint_dir, accuracy=run_accuracy[len(run_accuracy) - 1],
-                            # iteration=p))
-                            # print("The Final Accuracy is {}".format(run_accuracy))
+                            print("Saved model checkpoint to {}\n".format(path))
 
         if(t==1):
             #undersample
