@@ -147,6 +147,7 @@ for o in range(0,5):
         negative_labels = []
 
         checkpoint_dir_for_eval = ""
+
         if(t==0):
             #no change
             y_test = y_dev
@@ -224,7 +225,7 @@ for o in range(0,5):
                     if not os.path.exists(checkpoint_dir):
                         os.makedirs(checkpoint_dir)
                     saver = tf.train.Saver(tf.all_variables())
-
+                    checkpoint_dir_for_eval = checkpoint_dir
                     # Write vocabulary
                     vocab_processor.save(os.path.join(out_dir, "vocab"))
 
