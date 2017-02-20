@@ -110,10 +110,10 @@ for o in range(0,5):
             else:
                 list_neg_train_instances.append(x_shuffled[x])
     #final value
-    print("New Positive Test Size{}".format(list_pos_dev_instances))
-    print("New Negative Test Size{}".format(list_neg_dev_instances))
-    print("New Positive Train Size{}".format(list_pos_train_instances))
-    print("New Negative Train Size{}".format(list_neg_train_instances))
+    print("New Positive Test Size{}".format(len(list_pos_dev_instances)))
+    print("New Negative Test Size{}".format(len(list_neg_dev_instances)))
+    print("New Positive Train Size{}".format(len(list_pos_train_instances)))
+    print("New Negative Train Size{}".format(len(list_neg_train_instances)))
 
     text_for_file ="4331_positive"
 
