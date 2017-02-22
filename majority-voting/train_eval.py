@@ -636,9 +636,9 @@ for o in range(0,5):
             for w in range(0, int(positive_test_size) + int(negative_test_size)):
                 sumOne = 0
                 sumZero = 0
-                for t in range(0, number_of_classifiers):
+                for a in range(0, number_of_classifiers):
                     # print("classifier {} prediction: {}".format(t, testList[t][w]))
-                    if (all_model_predictions[t][w] == 1.0).all():
+                    if (all_model_predictions[a][w] == 1.0).all():
                         # print("Positive Label")
                         sumOne = sumOne + 1
                     else:
