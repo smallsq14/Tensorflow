@@ -613,7 +613,7 @@ for o in range(0,5):
                 print("Precision, Recall, Fscore")
                 print(confusion_matrix(y_test, all_predictions))
                 print(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
-                outfile = open('rus_10_method_' + str(t) + '_run' + str(o) + ' classifier.txt',
+                outfile = open('rus_10_method_' + str(t) + '_run_' + str(o) + '_classifier.txt',
                                'w')
                 outfile.write("\nTotal number of test examples: {}".format(len(y_test)))
                 outfile.write("\nAll predictions {}".format(len(all_predictions)))
@@ -670,7 +670,7 @@ for o in range(0,5):
             print("Precision, Recall, Fscore")
             print(confusion_matrix(y_test, all_predictions))
             print(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
-            outfile = open('rus_10_method_'+str(t) + '_run' + str(o)+ 'classifier.txt','w')
+            outfile = open('rus_10_method_'+str(t) + '_run_' + str(o)+ '_classifier.txt','w')
             outfile.write("\nTotal number of test examples: {}".format(len(y_test)))
             outfile.write("\nAll predictions {}".format(len(all_predictions)))
             outfile.write("\ny test: {}".format(len(y_test)))
