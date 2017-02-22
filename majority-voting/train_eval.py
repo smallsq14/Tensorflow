@@ -679,8 +679,8 @@ for o in range(0,5):
             outfile.write("\nCorrect Predictions {}".format(len(y_test) - float(sum(all_predictions != y_test))))
             outfile.write("\nAccuracy: {:g}".format(correct_predictions / float(len(y_test))))
 
-            for t in range(0,len(classifier_list)):
-                outfile.write("\nClassifier {} accuracy {}".format(classifier_list[t].iteration,classifier_list[t].accuracy))
+            for l in range(0,len(classifier_list)):
+                outfile.write("\nClassifier {} accuracy {}".format(classifier_list[l].iteration,classifier_list[l].accuracy))
             #outfile.write("\nPrecision, Recall, Fscore")
         #     #outfile.write(precision_recall_fscore_support(y_test, all_predictions, average='micro'))
             outfile.write('\n'+np.array2string(confusion_matrix(y_test, all_predictions),separator=','))
