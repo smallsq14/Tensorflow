@@ -644,7 +644,7 @@ for o in range(0,5):
                     else:
                         # print("Negative label")
                         sumZero = sumZero + 1
-                if (sumOne > sumZero):
+                if (sumOne >= sumZero):
                     all_predictions.append(1.0)
                 else:
                     all_predictions.append(0.0)
