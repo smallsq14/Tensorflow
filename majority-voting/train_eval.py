@@ -332,7 +332,6 @@ for o in range(0,5):
                 list_positive_balanced.append(
                     list_positive_instances[random.randint(0, len(list_positive_instances) - 1)])
             print("Positive size now: %s", len(list_positive_balanced))
-            outfile.write("Positive size now: {}".format(len(list_positive_balanced)))
             list_positive_instances = list_positive_balanced
             print("The count of positive labels in test after oversampling: %s", len(list_negative_instances))
             print("The count of negative labels in test after oversampling: %s", len(list_positive_instances))
