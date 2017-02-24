@@ -140,6 +140,8 @@ for o in range(0,5):
 
 
     for t in range(0,3):
+        list_positive_instances = list_pos_train_instances
+        list_negative_instances = list_neg_train_instances
         run_accuracy = []
         x_train = []
         y_train = []
