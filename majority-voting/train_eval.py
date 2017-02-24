@@ -63,7 +63,7 @@ for o in range(0,5):
     x = np.array(list(vocab_processor.fit_transform(x_text)))
 
     # Randomly shuffle data
-    np.random.seed(random_seed)
+    np.random.seed(int(o)+2)
     shuffle_indices = np.random.permutation(np.arange(len(y)))
 
     #x_raw_shuffled = x_text[shuffle_indices]
@@ -139,7 +139,7 @@ for o in range(0,5):
     x_train = []
     y_train = []
 
-    for t in range(0,3):
+    for t in range(1,3):
         list_positive_instances = list_pos_train_instances
         list_negative_instances = list_neg_train_instances
         print("Length of Cut positive train:%s", len(list_positive_instances))
@@ -471,6 +471,8 @@ for o in range(0,5):
                         #        writer.add_summary(summaries, step)
 
                         # Generate batches
+                        print("X TRAIN {}".format(len(x_train)))
+                        print("Y TRAIN {}".format(len(x_train)))
                         batches = data_helpers.batch_iter(
                             list(zip(x_train, y_train)), FLAGS.batch_size, FLAGS.num_epochs)
                         # Training loop. For each batch...
