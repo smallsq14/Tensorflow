@@ -472,10 +472,12 @@ for o in range(0,5):
 
                         # Generate batches
                         print("X TRAIN {}".format(len(x_train)))
-                        print("Y TRAIN {}".format(len(x_train)))
+                        print("Y TRAIN {}".format(len(y_train)))
                         batches = data_helpers.batch_iter(
                             list(zip(x_train, y_train)), FLAGS.batch_size, FLAGS.num_epochs)
                         # Training loop. For each batch...
+                        print("Length of Batches:{}".format(len(batches)))
+                        print(batches)
                         for batch in batches:
                             x_batch, y_batch = zip(*batch)
                             train_step(x_batch, y_batch)

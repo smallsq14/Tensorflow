@@ -50,6 +50,7 @@ def load_data_and_labels():
 
 
 def batch_iter(data, batch_size, num_epochs, shuffle=True):
+    print(data)
     """
     Generates a batch iterator for a dataset.
     """
