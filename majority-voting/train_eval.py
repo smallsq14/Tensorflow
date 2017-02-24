@@ -78,7 +78,7 @@ for o in range(0,5):
 
     list_positive_instances = []
     list_negative_instances = []
-    imbalance_size = 1000
+    imbalance_size = 1500
     #print("Size of Positive Instances{}".format(len(list_positive_instances)))
     positive_test_size = round(.20 * imbalance_size)
     positive_train_size = round(imbalance_size - positive_test_size)
@@ -476,8 +476,7 @@ for o in range(0,5):
                         batches = data_helpers.batch_iter(
                             list(zip(x_train, y_train)), FLAGS.batch_size, FLAGS.num_epochs)
                         # Training loop. For each batch...
-                        print("Length of Batches:{}".format(len(batches)))
-                        print(batches)
+
                         for batch in batches:
                             x_batch, y_batch = zip(*batch)
                             train_step(x_batch, y_batch)
