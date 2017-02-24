@@ -129,22 +129,23 @@ for o in range(0,5):
 
     print("Length of Cut positive test:%s", len(list_pos_dev_instances))
     print("Length of Cut negative test:%s", len(list_neg_dev_instances))
-    list_positive_instances = list_pos_train_instances
-    list_negative_instances = list_neg_train_instances
+    #list_positive_instances = list_pos_train_instances
+    #list_negative_instances = list_neg_train_instances
 
-    print("Length of Cut positive train:%s", len(list_positive_instances))
-    print("Length of Cut negative train:%s", len(list_negative_instances))
+
 
     print("Length of Dev X :%s", len(y_dev))
     print("Length of Dev Y :%s", len(x_dev))
-
+    x_train = []
+    y_train = []
 
     for t in range(0,3):
         list_positive_instances = list_pos_train_instances
         list_negative_instances = list_neg_train_instances
+        print("Length of Cut positive train:%s", len(list_positive_instances))
+        print("Length of Cut negative train:%s", len(list_negative_instances))
         run_accuracy = []
-        x_train = []
-        y_train = []
+
         all_predictions = []
         positive_labels = []
         negative_labels = []
@@ -357,7 +358,10 @@ for o in range(0,5):
 
         y_test = y_dev
         x_test = x_dev
-        print("Checking length of y_test{}".format(len(y_test)))
+        print("Checking length of y_test {}".format(len(y_test)))
+        print("Checking length of x_test {}".format(len(x_test)))
+        print("Checking length of y_train {}".format(len(y_train)))
+        print("Checking length of x_train {}".format(len(x_train)))
         if ((t==1)or(t==2)):
             for p in range(0,number_of_classifiers):
                 rand_seed = randint(0, 9)
