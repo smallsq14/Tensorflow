@@ -367,7 +367,7 @@ for o in range(0,5):
         print("Checking length of x_train {}".format(len(x_train)))
 
         if ((t==1)or(t==2)):
-
+            classifier_list = []
             for p in range(0,number_of_classifiers):
                 rand_seed = randint(0, 9)
 
