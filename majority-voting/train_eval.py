@@ -45,7 +45,8 @@ for attr, value in sorted(FLAGS.__flags.items()):
     print("{}={}".format(attr.upper(), value))
 print("")
 
-all_model_predictions = list()
+all_model_predictions_undersampled = list()
+all_model_predictions_oversampled = list()
 # Data Preparation
 # ==================================================
 
@@ -140,6 +141,8 @@ for o in range(0,5):
     y_train = []
 
     for t in range(0,3):
+        all_model_predictions_undersampled = list()
+        all_model_predictions_oversampled = list()
         list_positive_instances = list_pos_train_instances
         list_negative_instances = list_neg_train_instances
         print("Length of Cut positive train:%s", len(list_positive_instances))
@@ -362,9 +365,9 @@ for o in range(0,5):
         print("Checking length of x_test {}".format(len(x_test)))
         print("Checking length of y_train {}".format(len(y_train)))
         print("Checking length of x_train {}".format(len(x_train)))
-        del all_model_predictions[:]
-        if ((t==1)or(t==2)):
 
+        if ((t==1)or(t==2)):
+            classifier_list = []
             for p in range(0,number_of_classifiers):
                 rand_seed = randint(0, 9)
 
@@ -545,8 +548,11 @@ for o in range(0,5):
                     print("All Predictions:\n")
                     print (all_predictions)
                     np.save('all_predictions_'+str(p)+'.txt', all_predictions)
-                    all_model_predictions.append(all_predictions)
-                    print("length of the list {}".format(len(all_model_predictions)))
+                    if(t==1):
+                        all_model_predictions_undersampled.append(all_predictions)
+                    if(t==2):
+                        all_model_predictions_oversampled.append(all_predictions)
+                    #print("length of the list {}".format(len(all_model_predictions)))
                     print (y_test)
                     print("--End All Predictions\m")
                     print("Length of All Predictions {}".format(len(all_predictions)))
@@ -638,7 +644,7 @@ for o in range(0,5):
                 #     #outfile.write(confusion_matrix(y_test, all_predictions))
                 outfile.close()
         else:
-            print("length of the list {}".format(len(all_model_predictions)))
+            #print("length of the list {}".format(len(all_model_predictions)))
 
             pos_value = np.array([0, 1])
             neg_value = np.array([1, 0])
@@ -649,12 +655,20 @@ for o in range(0,5):
                 sumZero = 0
                 for a in range(0, number_of_classifiers):
                     # print("classifier {} prediction: {}".format(t, testList[t][w]))
-                    if (all_model_predictions[a][w] == 1.0).all():
-                        # print("Positive Label")
-                        sumOne = sumOne + 1
+                    if(t==1):
+                        if (all_model_predictions_undersampled[a][w] == 1.0).all():
+                            # print("Positive Label")
+                            sumOne = sumOne + 1
+                        else:
+                            # print("Negative label")
+                            sumZero = sumZero + 1
                     else:
-                        # print("Negative label")
-                        sumZero = sumZero + 1
+                        if (all_model_predictions_oversampled[a][w] == 1.0).all():
+                            # print("Positive Label")
+                            sumOne = sumOne + 1
+                        else:
+                            # print("Negative label")
+                            sumZero = sumZero + 1
                 if (sumOne >= sumZero):
                     all_predictions.append(1.0)
                 else:
