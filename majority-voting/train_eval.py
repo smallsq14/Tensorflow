@@ -79,7 +79,7 @@ for o in range(0,5):
 
     list_positive_instances = []
     list_negative_instances = []
-    imbalance_size = 1000
+    imbalance_size = 1500
     #print("Size of Positive Instances{}".format(len(list_positive_instances)))
     positive_test_size = round(.20 * imbalance_size)
     positive_train_size = round(imbalance_size - positive_test_size)
